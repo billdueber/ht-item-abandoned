@@ -1,7 +1,7 @@
 # coding: utf-8
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "ht_pairtree/version"
+require "ht/item/version"
 
 Gem::Specification.new do |spec|
   spec.name    = "ht-item"
@@ -12,9 +12,7 @@ Gem::Specification.new do |spec|
   spec.summary  = %q{A representation of an HT item (useful internally only)}
   spec.homepage = "https://github.com/hathitrust/ht-item"
   spec.license  = "MIT"
-
-  spec.allowed_push_host             = "https://gems.www.lib.umich.edu/"
-
+  
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
   # to allow pushing to a single host or delete this section to allow pushing to any host.
   spec.metadata["allowed_push_host"] = "https://gems.www.lib.umich.edu/"
