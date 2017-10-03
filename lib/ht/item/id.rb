@@ -29,6 +29,7 @@ module HT
                                 barcode(HT.pairtree_gsub(htid))
                               end
 
+        path = [namespace, 'pairtree_root'].concat pair_subbed_barcode.scan(/../)
         File.join(@root, *path, pair_subbed_barcode)
       end
 
