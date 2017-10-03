@@ -26,7 +26,7 @@ module HT
         pair_subbed_barcode = if htid.nil?
                                 pair_translated_barcode
                               else
-                                barcode(HT.pairtree_gsub(htid))
+                                HT.pairtree_gsub(barcode(htid))
                               end
 
         path = [namespace, 'pairtree_root'].concat pair_subbed_barcode.scan(/../)
