@@ -29,8 +29,6 @@ module HT
                                 barcode(HT.pairtree_gsub(htid))
                               end
 
-        puts "psb is #{pair_subbed_barcode}"
-        puts "namespace for #{htid} is #{namespace(htid)}"
         File.join(@root, *path, pair_subbed_barcode)
       end
 
