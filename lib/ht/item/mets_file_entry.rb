@@ -23,7 +23,7 @@ module HT
       attribute :size, Types::Form::Int
       attribute :sequence, Types::Form::Int
       attribute :mimetype, MimeTypes
-      attribute :created, Types::DateTime
+      attribute :created, Types::Coercible::DateTime
       attribute :checksum, Types::Strict::String
       attribute :sequenceString, Types::Strict::String
 

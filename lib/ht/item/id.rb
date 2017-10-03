@@ -8,7 +8,7 @@ module HT
 
       attr_reader :id, :root, :pair_translated_barcode
 
-      def initialize(id, pairtree_root: HT::SDRROOT)
+      def initialize(id, pairtree_root: HT::Item::SDRROOT)
         @id                      = id
         @pair_translated_barcode = self.barcode(HT.pairtree_gsub(id))
         @root                    = pairtree_root
