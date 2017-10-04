@@ -34,7 +34,6 @@ module HT
           acc << MetsFileEntry.new(
             id:             nokogiri_file_node.attr('ID'),
             size:           nokogiri_file_node.attr('SIZE'),
-            sequence:       nokogiri_file_node.attr('SEQ'),
             sequenceString: nokogiri_file_node.attr('SEQ'),
             mimetype:       nokogiri_file_node.attr('MIMETYPE'),
             created:        nokogiri_file_node.attr('CREATED'),

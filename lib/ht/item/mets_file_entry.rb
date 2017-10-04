@@ -1,14 +1,9 @@
-require 'dry-struct'
-
+require 'date'
 
 module HT
   class Item
 
-    module Types
-      include Dry::Types.module
-    end
-
-    class MetsFileEntry < Dry::Struct
+    class MetsFileEntry
 
       SuffixMap = {
         'text/plain' => 'txt',
@@ -19,13 +14,25 @@ module HT
 
       MimeTypes = Types::Strict::String.enum(*(SuffixMap.keys))
 
-      attribute :id, Types::Strict::String
-      attribute :size, Types::Form::Int
-      attribute :sequence, Types::Form::Int
-      attribute :mimetype, MimeTypes
-      attribute :created, Types::Form::DateTime
-      attribute :checksum, Types::Strict::String
-      attribute :sequenceString, Types::Strict::String
+      attr_reader :id, :sequenceString, :mimetype, :checksum
+      def initialize(id:, size:, sequenceString:, mimetype:,created:, checksum:)
+        @id = id
+        @size = size
+        @sequenceString = sequenceString
+        @mimetype = mimetype
+        @createdString = created
+        @checksum = checksum
+      end
+
+      def sequence
+        @sequence ||= sequenceString.to_i
+      end
+      alias_method :seq, :sequence
+
+      def created
+        @created ||= DateTime.parse(@createdString)
+      end
+
 
       def suffix
         SuffixMap[mimetype]
