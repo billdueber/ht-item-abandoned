@@ -1,10 +1,17 @@
 require "bundler/gem_tasks"
 require "rake/testtask"
 
-Rake::TestTask.new(:test) do |t|
-  t.libs << "test"
+Rake::TestTask.new(:spec) do |t|
+  t.libs << "spec"
   t.libs << "lib"
-  t.test_files = FileList["test/**/*_test.rb"]
+  t.test_files = FileList["spec/**/*_spec.rb"]
 end
 
-task :default => :test
+Rake::TestTask.new(:spec_gc) do |t|
+  oldtestopts = ENV['TESTOPTS'] || ''
+  ENV['TESTOPTS'] = [ENV['TESTOPTS'], '-g'].join(' ')
+  Rake::Task[:spec].invoke
+  ENV['TESTOPTS'] = oldtestopts
+end
+
+task :default => :spec_gc
