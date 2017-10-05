@@ -31,13 +31,15 @@ module HT
       def mets_file_entries(type, nokogiri_mets_document: self.mets)
         nokogiri_mets_document.css("METS|fileGrp[USE=#{type}] METS|file").
           inject([]) do |acc, nokogiri_file_node|
+          name = nokogiri_file_node.css("METS|FLocat[OTHERLOCTYPE=SYSTEM]").first.get_attribute('xlink:href')
           acc << MetsFileEntry.new(
             id:             nokogiri_file_node.attr('ID'),
             size:           nokogiri_file_node.attr('SIZE'),
             sequenceString: nokogiri_file_node.attr('SEQ'),
             mimetype:       nokogiri_file_node.attr('MIMETYPE'),
             created:        nokogiri_file_node.attr('CREATED'),
-            checksum:       nokogiri_file_node.attr('CHECKSUM')
+            checksum:       nokogiri_file_node.attr('CHECKSUM'),
+            name:           name
           )
           acc
         end

@@ -14,36 +14,38 @@ module HT
       ValidMimetypes = SuffixMap.keys
 
 
-      attr_reader :id, :sequenceString, :mimetype, :checksum
-      def initialize(id:, size:, sequenceString:, mimetype:,created:, checksum:)
+      attr_reader :id, :sequenceString, :mimetype, :checksum, :name
+
+      def initialize(id:, size:, sequenceString:, mimetype:, created:, checksum:, name:)
         unless ValidMimetypes.include? mimetype
           raise ArgumentError, "Mimetype #{mimetype} not recognized ([#{ValidMimetypes.join(',')}]"
         end
 
-        @id = id
-        @size = size.to_i
+        @id             = id
+        @size           = size.to_i
         @sequenceString = sequenceString
-        @mimetype = mimetype
-        @createdString = created
-        @checksum = checksum
+        @mimetype       = mimetype
+        @createdString  = created
+        @checksum       = checksum
+        @name           = name
       end
 
       def sequence
         @sequence ||= sequenceString.to_i
       end
+
       alias_method :seq, :sequence
 
       def created
         @created ||= DateTime.parse(@createdString)
       end
 
-
       def suffix
         SuffixMap[mimetype]
       end
 
       def zipfilepath
-        "/#{sequenceString}.#{suffix}"
+        "/#{name}"
       end
 
     end
