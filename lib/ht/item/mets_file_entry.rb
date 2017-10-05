@@ -7,10 +7,6 @@ module HT
       attr_reader :id, :sequenceString, :mimetype, :checksum, :name
 
       def initialize(id:, size:, sequenceString:, mimetype:, created:, checksum:, name:)
-        unless ValidMimetypes.include? mimetype
-          raise ArgumentError, "Mimetype #{mimetype} not recognized ([#{ValidMimetypes.join(',')}]"
-        end
-
         @id             = id
         @size           = size.to_i
         @sequenceString = sequenceString

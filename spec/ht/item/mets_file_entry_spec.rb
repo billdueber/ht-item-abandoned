@@ -37,16 +37,6 @@ describe HT::Item::MetsFileEntry do
       expect(@mfe.created).must_equal date
     end
 
-    it "finds the suffix" do
-      expect(@mfe.suffix).must_equal "txt"
-    end
-
-    it "raises on unexpected mime type" do
-      args            = @args.dup
-      args[:mimetype] = 'text/junk'
-      expect(proc {HT::Item::MetsFileEntry.new(args)}).must_raise(ArgumentError)
-    end
-
     it "produces a relative zipfile path" do
       expect(@mfe.path_in_zipfile).must_equal "/#{@args[:sequenceString]}.txt"
     end
