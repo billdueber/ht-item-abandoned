@@ -4,8 +4,8 @@ require 'ht/item/mets_file_entry'
 describe HT::Item::MetsFileEntry do
 
   # some fake data
-  before do
-    @args = {
+  let(:args) do
+    {
       id:             "the_id",
       size:           "100",
       sequenceString: '%07d' % 1,
@@ -18,27 +18,25 @@ describe HT::Item::MetsFileEntry do
 
   describe "basics" do
     it "loads and initializes" do
-      expect(HT::Item::MetsFileEntry.new(@args)).must_be_kind_of HT::Item::MetsFileEntry
+      expect(HT::Item::MetsFileEntry.new(args)).must_be_kind_of HT::Item::MetsFileEntry
     end
   end
 
 
   describe "coercion" do
-    before do
-      @mfe = HT::Item::MetsFileEntry.new(@args)
-    end
+    let(:mfe) { HT::Item::MetsFileEntry.new(args) }
 
     it "computes sequence" do
-      expect(@mfe.sequence).must_equal 1
+      expect(mfe.sequence).must_equal 1
     end
 
     it "generates date" do
       date = DateTime.new(2011, 3, 19, 13, 31, 32)
-      expect(@mfe.created).must_equal date
+      expect(mfe.created).must_equal date
     end
 
     it "produces a relative zipfile path" do
-      expect(@mfe.path_in_zipfile).must_equal "/#{@args[:sequenceString]}.txt"
+      expect(mfe.path_in_zipfile).must_equal "/#{args[:sequenceString]}.txt"
     end
   end
 end
