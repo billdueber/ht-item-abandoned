@@ -3,6 +3,7 @@ require 'ht/item/mets_file_entry'
 
 describe HT::Item::MetsFileEntry do
 
+  # some fake data
   before do
     @args = {
       id:             "the_id",
@@ -10,7 +11,8 @@ describe HT::Item::MetsFileEntry do
       sequenceString: '%07d' % 1,
       mimetype:       'text/plain',
       created:        "2011-03-19T13:31:32Z",
-      checksum:       "d41d8cd98f00b204e9800998ecf8427e"
+      checksum:       "d41d8cd98f00b204e9800998ecf8427e",
+      name:           "0000001.txt"
     }
   end
 
@@ -35,18 +37,8 @@ describe HT::Item::MetsFileEntry do
       expect(@mfe.created).must_equal date
     end
 
-    it "finds the suffix" do
-      expect(@mfe.suffix).must_equal "txt"
-    end
-
-    it "raises on unexpected mime type" do
-      args = @args.dup
-      args[:mimetype] = 'text/junk'
-      expect(proc{HT::Item::MetsFileEntry.new(args)}).must_raise(ArgumentError)
-    end
-
     it "produces a relative zipfile path" do
-      expect(@mfe.zipfilepath).must_equal "/#{@args[:sequenceString]}.txt"
+      expect(@mfe.path_in_zipfile).must_equal "/#{@args[:sequenceString]}.txt"
     end
   end
 end
