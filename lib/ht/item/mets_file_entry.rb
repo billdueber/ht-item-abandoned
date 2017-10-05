@@ -16,6 +16,8 @@ module HT
         @name           = name
       end
 
+      alias_method :filename, :name
+
       def sequence
         @sequence ||= sequenceString.to_i
       end
