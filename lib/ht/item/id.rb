@@ -29,7 +29,7 @@ module HT
         prefix_components = [@root, namespace, 'pairtree_root']
         ptb = pair_translated_barcode(htid)
         relpath = ptb.scan(/../)
-        File.join(prefix_components, relpath)
+        File.join(prefix_components, relpath, pair_translated_barcode(htid))
       end
 
       alias_method :pairtree_path, :dir

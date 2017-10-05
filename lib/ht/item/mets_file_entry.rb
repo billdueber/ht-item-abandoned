@@ -32,6 +32,12 @@ module HT
         "/#{name}"
       end
 
+      # convenience method to get the name out of a nokogiri node.
+      # Not sure where this should live...
+      def self.name_from_node(node)
+        node.css("METS|FLocat[OTHERLOCTYPE=SYSTEM]").first.get_attribute('xlink:href')
+      end
+
     end
   end
 end
