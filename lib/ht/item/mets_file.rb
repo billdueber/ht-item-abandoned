@@ -27,6 +27,16 @@ module HT
         @image_files ||= mets_file_entries('image')
       end
 
+      def metsfile
+        if @metsfile.nil?
+          f = mets.css("METS|fileGrp[USE=\"source METS\"] METS|file")
+          inner = f.css("METS|FLocat[OTHERLOCTYPE=SYSTEM]").first
+          name = inner.get_attribute('xlink:href')
+          @metsfile = name
+        end
+        @metsfile
+      end
+
 
       def mets_file_entries(type, nokogiri_mets_document: self.mets)
         nokogiri_mets_document.css("METS|fileGrp[USE=#{type}] METS|file").

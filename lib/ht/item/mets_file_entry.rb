@@ -44,7 +44,7 @@ module HT
         SuffixMap[mimetype]
       end
 
-      def zipfilepath
+      def path_in_zipfile
         "/#{name}"
       end
 
