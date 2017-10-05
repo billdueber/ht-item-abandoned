@@ -4,16 +4,6 @@ module HT
   class Item
 
     class MetsFileEntry
-
-      SuffixMap = {
-        'text/plain' => 'txt',
-        'text/xml'   => 'xml',
-        'image/jp2'  => 'jp2'
-      }
-
-      ValidMimetypes = SuffixMap.keys
-
-
       attr_reader :id, :sequenceString, :mimetype, :checksum, :name
 
       def initialize(id:, size:, sequenceString:, mimetype:, created:, checksum:, name:)
@@ -38,10 +28,6 @@ module HT
 
       def created
         @created ||= DateTime.parse(@createdString)
-      end
-
-      def suffix
-        SuffixMap[mimetype]
       end
 
       def path_in_zipfile
