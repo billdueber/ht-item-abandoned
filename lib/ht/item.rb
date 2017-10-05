@@ -36,6 +36,10 @@ module HT
 
 
     def zipfile(filename = zipfile_path)
+      Zip::File.open(zipfile_path)
+    end
+
+    def get_ocr(*args)
 
     end
 
