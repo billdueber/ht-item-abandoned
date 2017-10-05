@@ -1,19 +1,11 @@
 module HT
 
-  SDRROOT = ENV["SDRROOT"] || raise("SDRROOT env variable not set")
+  SDRROOT = ENV["SDRROOT"] || '/sdr1/obj' #raise("SDRROOT env variable not set")
 
   PAIRTREE_TRANSLATIONS = {
     ':' => '+',
     '/' => '=',
   }
-
-
-  MIMETYPE_SUFFIX = {
-    "image/jp2"  => 'jp2',
-    "text/xml"   => "xml",
-    "text/plain" => 'txt'
-  }
-
 
 
   PAIRTREE_K_V = [PAIRTREE_TRANSLATIONS.keys.join(''),

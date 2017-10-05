@@ -6,11 +6,10 @@ module HT
     # and splitting up the id into parts
     class ID
 
-      attr_reader :id, :root, :pair_translated_barcode
+      attr_reader :id, :root
 
-      def initialize(id, pairtree_root: HT::Item::SDRROOT)
+      def initialize(id, pairtree_root: HT::SDRROOT)
         @id                      = id
-        @pair_translated_barcode = self.barcode(HT.pairtree_gsub(id))
         @root                    = pairtree_root
       end
 
@@ -22,18 +21,18 @@ module HT
         htid.split('.', 2).last
       end
 
-      def pairtree_path(htid=id)
-        pair_subbed_barcode = if htid.nil?
-                                pair_translated_barcode
-                              else
-                                HT.pairtree_gsub(barcode(htid))
-                              end
-
-        path = [namespace, 'pairtree_root'].concat pair_subbed_barcode.scan(/../)
-        File.join(@root, *path, pair_subbed_barcode)
+      def pair_translated_barcode(htid=id)
+        barcode(HT.pairtree_gsub(id))
       end
 
-      alias_method :dir, :pairtree_path
+      def dir(htid=id)
+        prefix_components = [@root, namespace, 'pairtree_root']
+        ptb = pair_translated_barcode(htid)
+        relpath = ptb.scan(/../)
+        File.join(prefix_components, relpath)
+      end
+
+      alias_method :pairtree_path, :dir
 
       def zipfile_path
         File.join(dir, "#{pair_translated_barcode}.zip")
