@@ -3,37 +3,41 @@ require 'ht/item/mets_file'
 
 
 describe HT::Item::MetsFile do
-  before(:all) do
-    @mets_file_path = data_file('mets.xml').freeze
-    @doc = Nokogiri.XML(data_file_content('mets.xml')).freeze
-    @mets = HT::Item::MetsFile.new(@mets_file_path).freeze
+  let(:metfile_real_name) {"ark+=13960=t9w09k00s.xml"}
+  let(:pages) {156}
 
-  end
+  let(:mets_file_path) {data_file('mets.xml').freeze}
+  let(:doc) {Nokogiri.XML(data_file_content('mets.xml')).freeze}
+  let(:mets) {HT::Item::MetsFile.new(mets_file_path).freeze}
+
 
   describe "load" do
     it "loads from a filename" do
       m = HT::Item::MetsFile.new(data_file('mets.xml')).mets
-      expect(m.to_xml).must_equal @doc.to_xml
+      expect(m.to_xml).must_equal doc.to_xml
     end
 
     it "loads from an io object" do
       io = File.open(data_file('mets.xml'))
-      m = HT::Item::MetsFile.new(io).mets
-      expect(m.to_xml).must_equal @doc.to_xml
+      m  = HT::Item::MetsFile.new(io).mets
+      expect(m.to_xml).must_equal doc.to_xml
+    end
+
+    describe "file_groups(fileGrp)" do
+      it "ocr files" do
+        expect(mets.ocr_files.size).must_equal pages
+      end
+
+      it "image files" do
+        expect(mets.image_files.size).must_equal pages
+      end
+
+      it "coord files" do
+        expect(mets.coord_files.size).must_equal pages
+      end
+
     end
   end
-
-  describe "top_level" do
-    it "finds the name" do
-      expect(@mets.name).must_equal "IA_ark+=13960=t9w09k00s.xml"
-    end
-  end
-
-  describe "file_groups(fileGrp)" do
-
-
-  end
-
 
 
 end

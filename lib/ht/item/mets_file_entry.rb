@@ -28,10 +28,6 @@ module HT
         @created ||= DateTime.parse(@createdString)
       end
 
-      def path_in_zipfile
-        "/#{name}"
-      end
-
       # convenience method to get the name out of a nokogiri node.
       # Not sure where this should live...
       def self.name_from_node(node)

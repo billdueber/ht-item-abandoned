@@ -35,9 +35,6 @@ describe HT::Item::MetsFileEntry do
       expect(mfe.created).must_equal date
     end
 
-    it "produces a relative zipfile path" do
-      expect(mfe.path_in_zipfile).must_equal "/#{args[:sequenceString]}.txt"
-    end
   end
 end
 
