@@ -25,7 +25,7 @@ module HT
 
     end
 
-
+    # TODO: Get rid of Pagelikes class and do it in Item
     class Pagelikes
 
       include Enumerable
@@ -35,6 +35,10 @@ module HT
       def initialize(mets_file)
         @mets      = MetsFile.new(mets_file)
         @pagelikes = self.read_pagelikes_from_mets(@mets)
+      end
+
+      def [](key)
+        @pagelikes[key]
       end
 
       def each
@@ -59,10 +63,10 @@ module HT
             id = fptr.get_attribute('FILEID')
             pl.files << mfes[id]
           end
-          acc << pl
+          acc[pl.order] = pl
           acc
         end
-        pls.sort
+        pls
       end
 
 
