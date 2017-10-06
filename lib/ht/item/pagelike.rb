@@ -11,7 +11,6 @@ module HT
       include Comparable
       attr_accessor :order, :labels, :type, :orderlabel, :files
 
-      # TODO: Ugh. Too much coupling? Why should the page object know its htid?
       def initialize
         @files = []
       end

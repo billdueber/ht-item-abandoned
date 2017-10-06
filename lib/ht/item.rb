@@ -63,7 +63,7 @@ module HT
       @pagelikes[num]
     end
 
-    def text_by_pagelike(*ordernums)
+    def texts(*ordernums)
       pagelike_numbers = flat_list_of_pagelike_numbers(ordernums)
       zipfilenames     = pagelike_numbers.reduce([]) do |acc, pln|
         acc << "#{zipfileroot}/#{@pagelikes[pln].filename(:text)}"
