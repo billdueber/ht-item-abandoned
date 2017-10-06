@@ -4,8 +4,8 @@ require 'ht/item'
 describe HT::Item do
   describe "sequence_lists" do
     let(:id) {'loc.ark:/13960/t9w09k00s'}
-    let(:mets) {HT::Item::MetsFile.new(data_file('mets.xml'))}
-    let(:item) {HT::Item.new(id, mets: mets)}
+    let(:mets_node) {HT::Item::MetsFile.new(data_file('mets.xml'))}
+    let(:item) {HT::Item.new(id, mets_node: mets_node)}
 
     it "one item" do
       expect(item.flat_list_of_indexes(1)).must_equal [1]

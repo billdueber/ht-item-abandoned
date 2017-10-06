@@ -8,11 +8,12 @@ describe HT::Item::MetsFileEntry do
     {
       id:             "the_id",
       size:           "100",
-      sequenceString: '%07d' % 1,
+      sequence: '%07d' % 1,
       mimetype:       'text/plain',
       created:        "2011-03-19T13:31:32Z",
       checksum:       "d41d8cd98f00b204e9800998ecf8427e",
-      name:           "0000001.txt"
+      filename:       "0000001.txt",
+      type:           :text
     }
   end
 
@@ -24,10 +25,10 @@ describe HT::Item::MetsFileEntry do
 
 
   describe "coercion" do
-    let(:mfe) { HT::Item::MetsFileEntry.new(args) }
+    let(:mfe) {HT::Item::MetsFileEntry.new(args)}
 
     it "computes sequence" do
-      expect(mfe.sequence).must_equal 1
+      expect(mfe.sequence).must_equal args[:sequence]
     end
 
     it "generates date" do
