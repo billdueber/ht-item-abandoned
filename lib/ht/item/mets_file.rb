@@ -21,8 +21,14 @@ module HT
           end
 
           # @return [Array<Nokogiri::XMLNode] XML nodes for each file entry
-          def file_entries_of_type(type, mets_node)
+          def file_entries_of_type(mets_node, type: )
             mets_node.css("METS|fileGrp[USE=#{type}] METS|file")
+          end
+
+          def volume_divs(mets_node, type: 'physical')
+            structMaps = mets_node.css("METS|structMap[TYPE=#{type}]")
+            raise "Multiple structmaps encountered!" if structMaps.size > 1
+            structMaps.first.css("METS|div METS|div")
           end
 
         end
@@ -33,17 +39,20 @@ module HT
       attr_reader :mets_node
 
       def initialize(file_or_filename)
-        if file_or_filename.respond_to? :read
-          @mets_node = self.load_mets(file_or_filename)
-        else
-          @mets_node = self.load_mets(File.open file_or_filename)
-        end
+        @mets_node        = if file_or_filename.respond_to? :read
+                              self.load_mets(file_or_filename)
+                            else
+                              self.load_mets(File.open file_or_filename)
+                            end
         @source_mets_name = NokogiriQueries.source_mets_name(self.mets_node)
+        @mfes             = {}
+        @pagelikes        = []
       end
 
       def load_mets(io)
         Nokogiri.XML(io)
       end
+
 
       def coord_files
         mets_file_entries('coordOCR')
@@ -59,18 +68,22 @@ module HT
         mets_file_entries('image')
       end
 
+      def volume_divs(mets_node=self.mets_node)
+        NokogiriQueries.volume_divs(mets_node)
+      end
+
 
       def mets_file_entries(type, mets_node: self.mets_node)
-        NokogiriQueries.file_entries_of_type(type, mets_node).inject([]) do |entries, file_node|
+        NokogiriQueries.file_entries_of_type(mets_node, type: type).inject([]) do |entries, file_node|
           entries << MetsFileEntry.new(
-            id:             file_node.attr('ID'),
-            size:           file_node.attr('SIZE'),
+            id:       file_node.attr('ID'),
+            size:     file_node.attr('SIZE'),
             sequence: file_node.attr('SEQ'),
-            mimetype:       file_node.attr('MIMETYPE'),
-            created:        file_node.attr('CREATED'),
-            checksum:       file_node.attr('CHECKSUM'),
-            filename:       NokogiriQueries.filename_from_file_entry_node(file_node),
-            type:           type
+            mimetype: file_node.attr('MIMETYPE'),
+            created:  file_node.attr('CREATED'),
+            checksum: file_node.attr('CHECKSUM'),
+            type:     type,
+            filename: NokogiriQueries.filename_from_file_entry_node(file_node)
           )
           entries
         end

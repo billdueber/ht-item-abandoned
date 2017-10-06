@@ -1,6 +1,5 @@
-require 'ht/item/id'
 require 'ht/constants'
-require 'ht/item/mets_file'
+require 'ht/item/pagelike'
 require 'nokogiri'
 require 'forwardable'
 require 'zip'
@@ -19,12 +18,10 @@ module HT
 
     def initialize(id, pairtree_root: HT::SDRROOT, mets_node: nil)
       @id        = HT::Item::ID.new(id, pairtree_root: pairtree_root)
-      @mets_node = mets_node || HT::Item::MetsFile.new(@id.metsfile_path)
-#      @pagelikes = self.generate_pagelikes(@mets_node)
+      @mets_node = HT::Item::MetsFile.new(@id.metsfile_path)
+      @pagelikes = HT::Item::Pagelikes.new(mets_node)
     end
 
-
-    # Given a mets file, generate a list of pagelike objects
 
     # Need to take something like 1..10, 11, 22, 33..100 and flatten it into
     # an array of sequence numbers

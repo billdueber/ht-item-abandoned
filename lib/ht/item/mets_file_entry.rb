@@ -1,4 +1,5 @@
 require 'date'
+require 'ht/constants'
 
 # TODO: Rewrite this so a single entry has all three files and can be ordered
 module HT
@@ -8,7 +9,7 @@ module HT
       attr_reader :id, :sequence, :mimetype, :checksum, :filename, :type
 
       def initialize(id:, size:, sequence:, mimetype:, created:, checksum:, filename:, type:)
-        @type          = type
+        @type          = HT::PAGE_TYPES[type]
         @id            = id
         @size          = size.to_i
         @sequence      = sequence

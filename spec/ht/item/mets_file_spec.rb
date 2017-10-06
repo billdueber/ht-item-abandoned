@@ -23,6 +23,11 @@ describe HT::Item::MetsFile do
       expect(m.to_xml).must_equal doc.to_xml
     end
 
+
+    describe "pageish entries" do
+
+    end
+
     describe "file_groups(fileGrp)" do
       it "ocr files" do
         expect(mets_node.ocr_files.size).must_equal pages
