@@ -19,8 +19,7 @@ module HT
 
     def initialize(id, pairtree_root: HT::SDRROOT, mets_node: nil)
       @id        = HT::Item::ID.new(id, pairtree_root: pairtree_root)
-      @mets_node = HT::Item::MetsFile.new(@id.metsfile_path)
-      @pagelikes = HT::Item::Pagelikes.new(@mets_node)
+      @pagelikes = HT::Item::Pagelikes.new(@id.metsfile_path
     end
 
 
