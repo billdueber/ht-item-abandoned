@@ -5,9 +5,10 @@ module HT
   class Item
 
     class MetsFileEntry
-      attr_reader :id, :sequenceString, :mimetype, :checksum, :name
+      attr_reader :id, :sequenceString, :mimetype, :checksum, :name, :type
 
-      def initialize(id:, size:, sequenceString:, mimetype:, created:, checksum:, name:)
+      def initialize(id:, size:, sequenceString:, mimetype:, created:, checksum:, name:, type:)
+        @type           = type
         @id             = id
         @size           = size.to_i
         @sequenceString = sequenceString
