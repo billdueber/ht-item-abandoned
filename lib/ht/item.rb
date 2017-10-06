@@ -12,16 +12,16 @@ module HT
     include Enumerable
 
 
-    attr_reader :id
+    attr_reader :idobj, :pagelikes, :zipfileroot
 
     # Forward much of the interesting stuff to id/mets objects
-    def_delegators :@idobj, :dir, :namespace, :barcode, :zipfile_path
+    def_delegators :@idobj, :id, :dir, :namespace, :barcode, :zipfile_path
 
-    # TODO make Pagelikes.new use a mets_node so stuff can be tested
-    def initialize(id, pairtree_root: HT::SDRROOT, mets_node: nil)
-      @idobj        = HT::Item::ID.new(id, pairtree_root: pairtree_root)
-      @pagelikes = HT::Item::Pagelikes.new(@id.metsfile_path)
-      @id = @idobj.id
+    def initialize(id, pairtree_root: HT::SDRROOT, mets: nil)
+      @idobj     = HT::Item::ID.new(id, pairtree_root: pairtree_root)
+      mets||= HT::Item::MetsFile.new(@idobj.metsfile_path)
+      @pagelikes = self.read_pagelikes_from_mets(mets)
+      @zipfileroot = @idobj.pair_translated_barcode
     end
 
     def each
@@ -29,27 +29,55 @@ module HT
       @pagelikes.each {|x| yield x}
     end
 
+
+    def read_pagelikes_from_mets(mets)
+      # First, get all the individual files listed
+      mfes = {}
+      HT::PAGE_TYPES.keys.each do |type|
+        mets.mets_file_entries(type).each {|mfe| mfes[mfe.id] = mfe}
+      end
+
+      # Now merge them into the volume divs
+      mets.volume_divs.reduce([]) do |acc, vd|
+        pl            = pagelike_from_volume_div(mfes, vd)
+        acc[pl.order] = pl
+        acc
+      end
+    end
+
+
+    def pagelike_from_volume_div(mfes, vd)
+      pl            = Pagelike.new
+      pl.order      = vd.get_attribute('ORDER').to_i
+      pl.labels     = vd.get_attribute('LABEL').split(/\s*,\s*/)
+      pl.type       = vd.get_attribute('TYPE')
+      pl.orderlabel = vd.get_attribute('ORDERLABEL')
+      vd.css('METS|fptr').each do |fptr|
+        id = fptr.get_attribute('FILEID')
+        pl.files << mfes[id]
+      end
+      pl
+    end
+
     def pagelike(num)
-      @pagelikes.find{|x| x.order == num }
+      @pagelikes[num]
     end
 
     def text_by_pagelike(*ordernums)
       pagelike_numbers = flat_list_of_pagelike_numbers(ordernums)
-      zipfilenames = pagelike_numbers.reduce([]) do |acc, pln|
-        acc << "#{id.pair_translated_barcode}/#{@pagelikes[pln].get_entry(:text)}"
+      zipfilenames     = pagelike_numbers.reduce([]) do |acc, pln|
+        acc << "#{zipfileroot}/#{@pagelikes[pln].filename(:text)}"
       end
-      # extract_from_zipfile()
+      # extract_from_zipfile(zipfilenames)
     end
 
     # Need to take something like 1..10, 11, 22, 33..100 and flatten it into
     # an array of sequence numbers
     def flat_list_of_pagelike_numbers(*args)
-      args.map{|x| Array(x)}.flatten
+      args.map {|x| Array(x)}.flatten
     end
 
   end
-
-
 
 
 end
