@@ -42,7 +42,7 @@ module HT
         @mets_node        = if file_or_filename.respond_to? :read
                               self.load_mets(file_or_filename)
                             else
-                              self.load_mets(File.open file_or_filename)
+                              self.load_mets(File.open(file_or_filename))
                             end
         @source_mets_name = NokogiriQueries.source_mets_name(self.mets_node)
         @mfes             = {}
@@ -50,7 +50,7 @@ module HT
       end
 
       def load_mets(io)
-        Nokogiri.XML(io)
+        Nokogiri.XML(io.read)
       end
 
 

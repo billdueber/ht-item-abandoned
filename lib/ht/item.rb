@@ -1,5 +1,6 @@
 require 'ht/constants'
 require 'ht/item/pagelike'
+require 'ht/item/id'
 require 'nokogiri'
 require 'forwardable'
 require 'zip'
