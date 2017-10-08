@@ -19,5 +19,5 @@ def data_file(filename)
 end
 
 def data_file_content(filename)
-  File.read(test_file(filename))
+  File.read(data_file(filename))
 end

@@ -1,5 +1,6 @@
 require 'date'
 
+# TODO: Rewrite this so a single entry has all three files and can be ordered
 module HT
   class Item
 
@@ -28,8 +29,10 @@ module HT
         @created ||= DateTime.parse(@createdString)
       end
 
-      def path_in_zipfile
-        "/#{name}"
+      # convenience method to get the name out of a nokogiri node.
+      # Not sure where this should live...
+      def self.name_from_node(node)
+        node.css("METS|FLocat[OTHERLOCTYPE=SYSTEM]").first.get_attribute('xlink:href')
       end
 
     end

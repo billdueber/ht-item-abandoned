@@ -1,4 +1,4 @@
-require 'ht/item/constants'
+require 'ht/constants'
 
 module HT
   class Item
@@ -21,6 +21,9 @@ module HT
         htid.split('.', 2).last
       end
 
+      # Some characters in the barcode portion need to be
+      # translated to something else in order to be useful
+      # in creating the pairtree directory struture
       def pair_translated_barcode(htid=id)
         barcode(HT.pairtree_gsub(id))
       end
@@ -29,7 +32,7 @@ module HT
         prefix_components = [@root, namespace, 'pairtree_root']
         ptb = pair_translated_barcode(htid)
         relpath = ptb.scan(/../)
-        File.join(prefix_components, relpath)
+        File.join(prefix_components, relpath, pair_translated_barcode(htid))
       end
 
       alias_method :pairtree_path, :dir
