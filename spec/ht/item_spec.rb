@@ -29,9 +29,5 @@ describe HT::Item do
   end
 
 
-  describe "zipfile" do
-
-  end
-
 
 end
