@@ -27,7 +27,17 @@ module HT
 
       def each
         return enum_for(:each) unless block_given?
-        @pagelikes.each {|x| yield x}
+        @pagelikes.each do |x|
+          next if x.nil?
+          yield x
+        end
+      end
+
+      def ordered_zipfile_internal_paths(type = :text)
+        self.map do |p|
+          puts "Zipfile: #{p.filename(:text)}"
+          [@zipfileroot, p.filename(type)].join('/')
+        end
       end
 
 
@@ -39,7 +49,7 @@ module HT
         end
 
         # Now merge them into the volume divs
-        mets.volume_divs.reduce([]) do |acc, vd|
+        pagelikes = mets.volume_divs.reduce([]) do |acc, vd|
           pl            = pagelike_from_volume_div(mfes, vd)
           acc[pl.order] = pl
           acc
@@ -66,13 +76,6 @@ module HT
 
       alias_method :[], :pagelike
 
-      def texts(*ordernums)
-        pagelike_numbers = flat_list_of_pagelike_numbers(ordernums)
-        zipfilenames     = pagelike_numbers.reduce([]) do |acc, pln|
-          acc << "#{zipfileroot}/#{@pagelikes[pln].filename(:text)}"
-        end
-        # extract_from_zipfile(zipfilenames)
-      end
 
       # Need to take something like 1..10, 11, 22, 33..100 and flatten it into
       # an array of sequence numbers
@@ -82,6 +85,6 @@ module HT
 
     end
   end
-  
+
 
 end

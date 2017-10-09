@@ -6,14 +6,14 @@ describe HT::Item::MetsFileEntry do
   # some fake data
   let(:args) do
     {
-      id:             "the_id",
-      size:           "100",
+      id:       "the_id",
+      size:     "100",
       sequence: '%07d' % 1,
-      mimetype:       'text/plain',
-      created:        "2011-03-19T13:31:32Z",
-      checksum:       "d41d8cd98f00b204e9800998ecf8427e",
-      filename:       "0000001.txt",
-      type:           :text
+      mimetype: 'text/plain',
+      created:  "2011-03-19T13:31:32Z",
+      checksum: "d41d8cd98f00b204e9800998ecf8427e",
+      filename: "0000001.txt",
+      type:     :text
     }
   end
 
