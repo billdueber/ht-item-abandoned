@@ -18,6 +18,12 @@ describe HT::Item::ID do
     }
   }
 
+  let(:actual_zip_path) {
+    {
+      ark_htid => '/sdr1/obj/loc/pairtree_root/ar/k+/=1/39/60/=t/9w/09/k0/0s/ark+=13960=t9w09k00s/ark+=13960=t9w09k00s.zip',
+    }
+  }
+
   it "gets normal namespace" do
     expect(id.namespace).must_equal 'uc1'
   end
@@ -51,4 +57,7 @@ describe HT::Item::ID do
   end
 
 
+  it "finds the zip file" do
+    expect(arkid.zipfile_path).must_equal actual_zip_path[arkid.id]
+  end
 end

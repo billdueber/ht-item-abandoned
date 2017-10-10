@@ -45,11 +45,6 @@ module HT
         File.join(dir, "#{pair_translated_barcode}.mets.xml")
       end
 
-
-      def pairtree_translate(htid = id)
-        htid.tr(*PTTRANS)
-      end
-
     end
   end
 end
