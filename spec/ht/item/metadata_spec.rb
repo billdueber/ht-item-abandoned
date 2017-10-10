@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'ht/item/metadata'
 
 describe HT::Item::Metadata do
-  let(:mets) { HT::Item::MetsFile.new(data_file('mets.xml'));}
+  let(:mets) { sample_mets_file}
   let(:htid) { 'loc.ark:/13960/t9w09k00s'}
   let(:md)   { HT::Item::Metadata.new(htid, mets: mets)}
   let(:pages) {156}

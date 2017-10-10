@@ -8,7 +8,7 @@ describe HT::Item::MetsFile do
 
   let(:mets_file_path) {data_file('mets.xml').freeze}
   let(:doc) {Nokogiri.XML(data_file_content('mets.xml')).freeze}
-  let(:mets_node) {HT::Item::MetsFile.new(mets_file_path).freeze}
+  let(:mets_node) { sample_mets_file }
 
 
   describe "load" do

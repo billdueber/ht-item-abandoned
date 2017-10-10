@@ -13,11 +13,9 @@ module HT
 
       def initialize
         @files = []
-      end
-
-      def each
-        return enum_for(:each) unless block_given?
-        @files.each {|x| yield x}
+        if block_given?
+          yield self
+        end
       end
 
       def <=>(other)

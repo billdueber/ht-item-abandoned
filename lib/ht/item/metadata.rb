@@ -33,9 +33,9 @@ module HT
         end
       end
 
+      # TODO: move zipfile internal path logic into the zipfile
       def ordered_zipfile_internal_paths(type = :text)
         self.map do |p|
-          puts "Zipfile: #{p.filename(:text)}"
           [@zipfileroot, p.filename(type)].join('/')
         end
       end
@@ -57,6 +57,9 @@ module HT
       end
 
 
+      # TODO: Use a real constructor for pagelike
+      # TODO: write a real method to add files to a pagelike
+      # TODO: Passing around the MFEs like this seems weird
       def pagelike_from_volume_div(mfes, vd)
         pl            = Pagelike.new
         pl.order      = vd.get_attribute('ORDER').to_i
@@ -85,6 +88,4 @@ module HT
 
     end
   end
-
-
 end

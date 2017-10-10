@@ -1,3 +1,4 @@
+require 'ht/item/version'
 require 'ht/item/metadata'
 require 'ht/item/zipfile'
 
@@ -6,17 +7,13 @@ module HT
   class Item
     def initialize(id, pairtree_root: HT::SDRROOT,
                    mets: nil,
-                   zipfile_path: nil)
+                   zipfile: nil)
       @metadata = Metadata.new(id, pairtree_root: pairtree_root, mets: mets)
-      @zipfile  = if defined? zipfile_path
-                    Zipfile.new(zipfile_path)
-                  else
-                    Zipfile.new(@metadata.zipfile_path)
-                  end
+      @zipfile  = zipfile or Zipfile.new(@metadata.zipfile_path)
     end
 
-    def generate_file_selector(*wanted)
-      ->(e) {wanted.include? e.name}
+    def generate_file_selector(wanted)
+      ->(e) { wanted.include? e.name}
     end
 
     def text_blocks(files_we_want = @metadata.ordered_zipfile_internal_paths(:text))

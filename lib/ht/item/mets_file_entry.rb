@@ -8,6 +8,9 @@ module HT
     class MetsFileEntry
       attr_reader :id, :sequence, :mimetype, :checksum, :filename, :type
 
+      # TODO: use combinations of attributes to determine where the thing lives
+      # (e.g., LOCTYPE="OTHER" OTHERLOCTYPE="SYSTEM" means it's
+      # in a zipfile)
       def initialize(id:, size:, sequence:, mimetype:, created:, checksum:, filename:, type:)
         @type          = HT::PAGE_TYPES[type]
         @id            = id
@@ -24,7 +27,6 @@ module HT
       def created
         @created ||= DateTime.parse(@createdString)
       end
-
     end
   end
 end

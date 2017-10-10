@@ -4,7 +4,10 @@ require 'ht/item/metadata'
 module HT
   class Item
     # A representation of the zipfile
-    # on disk
+    # on disk. Probably going to end up being
+    # one of several "places where we keep crap"
+    # implementations that respond to something
+    # like #contents_hashed_by_name
     class Zipfile
       def initialize(path)
         @path = path
@@ -21,7 +24,7 @@ module HT
         contents
       end
 
-      IS_TEXT = ->(e) { e.name =~ /\.txt\Z/}
+      IS_TEXT = ->(e) { e.name =~ /0+\d+\.txt\Z/}
       def text_contents_hashed_by_name
         contents_hashed_by_name(IS_TEXT)
       end
