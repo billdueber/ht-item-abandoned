@@ -21,3 +21,11 @@ end
 def data_file_content(filename)
   File.read(data_file(filename))
 end
+
+def sample_mets_file
+  HT::Item::MetsFile.new(data_file('mets.xml'))
+end
+
+def sample_zip_file
+  HT::Item::Zipfile.new(data_file('ark+=13960=t9w09k00s.zip'))
+end

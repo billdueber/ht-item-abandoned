@@ -12,7 +12,7 @@ end
 
 gmopts = %w[-background white -resize 850x1100 -fill black -pointsize 32]
 pages.each do |i|
-  seq = '%07d' % i
+  seq = '%08d' % i
   FileUtils.copy "fake_coords.xml", "#{barcode}/#{seq}.xml"
 
   File.open("#{barcode}/#{seq}.txt", "w") do |txt|
