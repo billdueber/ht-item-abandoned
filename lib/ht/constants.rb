@@ -9,7 +9,7 @@ module HT
   }
 
 
-  SDRDATAROOT = ENV["SDRDATAROOT"] || '/sdr1/obj' #raise("SDRROOT env variable not set")
+  SDRDATAROOT = (ENV["SDRDATAROOT"] || '/sdr1') + '/obj' #raise("SDRROOT env variable not set")
 
   PAIRTREE_TRANSLATIONS = {
     ':' => '+',
