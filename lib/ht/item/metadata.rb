@@ -22,13 +22,13 @@ module HT
         @idobj       = HT::Item::ID.new(id, pairtree_root: pairtree_root)
         mets         ||= HT::Item::MetsFile.new(@idobj.metsfile_path)
         @pagelikes   = self.read_pagelikes_from_mets(mets)
+        @pagelikes_hash = @pagelikes.reduce({}) {|h, p| h[p.order] = p; h}
         @zipfileroot = @idobj.pair_translated_barcode
       end
 
       def each
         return enum_for(:each) unless block_given?
         @pagelikes.each do |x|
-          next if x.nil?
           yield x
         end
       end
@@ -74,7 +74,7 @@ module HT
       end
 
       def pagelike(num)
-        @pagelikes.find{|p| p.order == num}
+        @pagelikes_hash[num]
       end
 
       alias_method :[], :pagelike
