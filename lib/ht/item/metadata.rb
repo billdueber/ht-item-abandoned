@@ -62,37 +62,38 @@ module HT
 
       # TODO: Use a real constructor for pagelike
       # TODO: write a real method to add files to a pagelike
-=      def pagelike_from_volume_div(vd)
-        pl            = Pagelike.new
-        pl.order      = vd.get_attribute('ORDER').to_i
-        pl.labels     = vd.get_attribute('LABEL').split(/\s*,\s*/)
-        pl.type       = vd.get_attribute('TYPE')
-        pl.orderlabel = vd.get_attribute('ORDERLABEL')
-        vd.css('METS|fptr').each do |fptr|
-          id = fptr.get_attribute('FILEID')
-          pl.files << mets_file_entries[id]
+      def pagelike_from_volume_div(vd)
+        Pagelike.new do |pl|
+          pl.order      = vd.get_attribute('ORDER').to_i
+          pl.labels     = vd.get_attribute('LABEL').split(/\s*,\s*/)
+          pl.type       = vd.get_attribute('TYPE')
+          pl.orderlabel = vd.get_attribute('ORDERLABEL')
+          vd.css('METS|fptr').each do |fptr|
+            id = fptr.get_attribute('FILEID')
+            pl.files << mets_file_entries[id]
+          end
         end
-        pl
       end
 
-      def pagelike(num)
-        @pagelikes_hash[num]
+
+        def pagelike(num)
+          @pagelikes_hash[num]
+        end
+
+        alias_method :[], :pagelike
+
+        def count
+          @pagelikes.count
+        end
+
+        alias_method :size, :count
+
+        # Need to take something like 1..10, 11, 22, 33..100 and flatten it into
+        # an array of sequence numbers
+        def flat_list_of_pagelike_numbers(*args)
+          args.map {|x| Array(x)}.flatten
+        end
+
       end
-
-      alias_method :[], :pagelike
-
-      def count
-        @pagelikes.count
-      end
-
-      alias_method :size, :count
-
-      # Need to take something like 1..10, 11, 22, 33..100 and flatten it into
-      # an array of sequence numbers
-      def flat_list_of_pagelike_numbers(*args)
-        args.map {|x| Array(x)}.flatten
-      end
-
     end
   end
-end
