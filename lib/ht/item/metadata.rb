@@ -18,7 +18,7 @@ module HT
       # Forward much of the interesting stuff to id/mets objects
       def_delegators :@idobj, :id, :dir, :namespace, :barcode, :zipfile_path
 
-      def initialize(id, pairtree_root: HT::SDRROOT, mets: nil)
+      def initialize(id, pairtree_root: HT::SDRDATAROOT, mets: nil)
         @idobj       = HT::Item::ID.new(id, pairtree_root: pairtree_root)
         mets         ||= HT::Item::MetsFile.new(@idobj.metsfile_path)
         @pagelikes   = self.read_pagelikes_from_mets(mets)
@@ -79,6 +79,11 @@ module HT
 
       alias_method :[], :pagelike
 
+      def count
+        @pagelikes.count
+      end
+
+      alias_method :size, :count
 
       # Need to take something like 1..10, 11, 22, 33..100 and flatten it into
       # an array of sequence numbers

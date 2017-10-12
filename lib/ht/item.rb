@@ -5,7 +5,7 @@ require 'ht/item/zipfile'
 
 module HT
   class Item
-    def initialize(id, pairtree_root: HT::SDRROOT,
+    def initialize(id, pairtree_root: HT::SDRDATAROOT,
                    mets: nil,
                    zipfile: nil)
       @metadata = Metadata.new(id, pairtree_root: pairtree_root, mets: mets)

@@ -8,7 +8,7 @@ module HT
 
       attr_reader :id, :root
 
-      def initialize(id, pairtree_root: HT::SDRROOT)
+      def initialize(id, pairtree_root: HT::SDRDATAROOT)
         @id                      = id
         @root                    = pairtree_root
       end
