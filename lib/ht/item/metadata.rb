@@ -13,17 +13,17 @@ module HT
       include Enumerable
 
 
-      attr_reader :idobj, :pagelikes, :zipfileroot
+      attr_reader :idobj, :pagelikes, :zipfileroot, :mets
 
       # Forward much of the interesting stuff to id/mets objects
       def_delegators :@idobj, :id, :dir, :namespace, :barcode, :zipfile_path
 
       def initialize(id, pairtree_root: HT::SDRDATAROOT, mets: nil)
-        @idobj       = HT::Item::ID.new(id, pairtree_root: pairtree_root)
-        mets         ||= HT::Item::MetsFile.new(@idobj.metsfile_path)
-        @pagelikes   = self.read_pagelikes_from_mets(mets)
+        @idobj = HT::Item::ID.new(id, pairtree_root: pairtree_root)
+        @mets = mets or HT::Item::MetsFile.new(@idobj.metsfile_path)
+        @pagelikes      = self.read_pagelikes_from_mets(mets)
         @pagelikes_hash = @pagelikes.reduce({}) {|h, p| h[p.order] = p; h}
-        @zipfileroot = @idobj.pair_translated_barcode
+        @zipfileroot    = @idobj.pair_translated_barcode
       end
 
       def each
@@ -40,17 +40,20 @@ module HT
         end
       end
 
+      def mets_file_entries(mets: self.mets, filegrps: HT::PAGE_TYPES.keys)
+        if @mfes.nil?
+          @mfes = {}
+          filegrps.each do |filegrp|
+            mets.mets_file_entries(filegrp).each {|mfe| @mfes[mfe.id] = mfe}
+          end
+        end
+        @mfes
+      end
+
 
       def read_pagelikes_from_mets(mets)
-        # First, get all the individual files listed
-        mfes = {}
-        HT::PAGE_TYPES.keys.each do |type|
-          mets.mets_file_entries(type).each {|mfe| mfes[mfe.id] = mfe}
-        end
-
-        # Now merge them into the volume divs
-        pagelikes = mets.volume_divs.reduce([]) do |acc, vd|
-          pl            = pagelike_from_volume_div(mfes, vd)
+        mets.volume_divs.reduce([]) do |acc, vd|
+          pl = pagelike_from_volume_div(vd)
           acc << pl
           acc
         end
@@ -59,8 +62,7 @@ module HT
 
       # TODO: Use a real constructor for pagelike
       # TODO: write a real method to add files to a pagelike
-      # TODO: Passing around the MFEs like this seems weird
-      def pagelike_from_volume_div(mfes, vd)
+=      def pagelike_from_volume_div(vd)
         pl            = Pagelike.new
         pl.order      = vd.get_attribute('ORDER').to_i
         pl.labels     = vd.get_attribute('LABEL').split(/\s*,\s*/)
@@ -68,7 +70,7 @@ module HT
         pl.orderlabel = vd.get_attribute('ORDERLABEL')
         vd.css('METS|fptr').each do |fptr|
           id = fptr.get_attribute('FILEID')
-          pl.files << mfes[id]
+          pl.files << mets_file_entries[id]
         end
         pl
       end
