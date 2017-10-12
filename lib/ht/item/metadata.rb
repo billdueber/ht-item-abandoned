@@ -51,7 +51,7 @@ module HT
         # Now merge them into the volume divs
         pagelikes = mets.volume_divs.reduce([]) do |acc, vd|
           pl            = pagelike_from_volume_div(mfes, vd)
-          acc[pl.order] = pl
+          acc << pl
           acc
         end
       end
@@ -74,7 +74,7 @@ module HT
       end
 
       def pagelike(num)
-        @pagelikes[num]
+        @pagelikes.find{|p| p.order == num}
       end
 
       alias_method :[], :pagelike
