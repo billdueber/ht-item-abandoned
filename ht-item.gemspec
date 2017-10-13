@@ -34,6 +34,5 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "rubyzip"
   spec.add_dependency "nokogiri"
-  spec.add_dependency "dry-struct"
 
 end

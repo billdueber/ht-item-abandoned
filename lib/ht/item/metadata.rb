@@ -20,7 +20,7 @@ module HT
 
       def initialize(id, pairtree_root: HT::SDRDATAROOT, mets: nil)
         @idobj = HT::Item::ID.new(id, pairtree_root: pairtree_root)
-        @mets = mets or HT::Item::MetsFile.new(@idobj.metsfile_path)
+        @mets = mets.nil? ? HT::Item::MetsFile.new(@idobj.metsfile_path) : mets
         @pagelikes      = self.read_pagelikes_from_mets(@mets)
         @pagelikes_hash = @pagelikes.reduce({}) {|h, p| h[p.order] = p; h}
         @zipfileroot    = @idobj.pair_translated_barcode
@@ -65,7 +65,7 @@ module HT
       def pagelike_from_volume_div(vd)
         Pagelike.new do |pl|
           pl.order      = vd.get_attribute('ORDER').to_i
-          pl.labels     = vd.get_attribute('LABEL').split(/\s*,\s*/)
+          pl.labels     = (vd.get_attribute('LABEL') || "").split(/\s*,\s*/)
           pl.type       = vd.get_attribute('TYPE')
           pl.orderlabel = vd.get_attribute('ORDERLABEL')
           vd.css('METS|fptr').each do |fptr|
