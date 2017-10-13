@@ -9,7 +9,7 @@ module HT
                    mets: nil,
                    zipfile: nil)
       @metadata = Metadata.new(id, pairtree_root: pairtree_root, mets: mets)
-      @zipfile  = zipfile or Zipfile.new(@metadata.zipfile_path)
+      @zipfile  = zilfile.nil? ? Zipfile.new(@metadata.zipfile_path) : zipfile
     end
 
     def generate_file_selector(wanted)
