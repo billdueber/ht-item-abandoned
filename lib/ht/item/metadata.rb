@@ -19,8 +19,8 @@ module HT
       def_delegators :@idobj, :id, :dir, :namespace, :barcode, :zipfile_path
 
       def initialize(id, pairtree_root: HT::SDRDATAROOT, mets: nil)
-        @idobj = HT::Item::ID.new(id, pairtree_root: pairtree_root)
-        @mets = mets.nil? ? HT::Item::MetsFile.new(@idobj.metsfile_path) : mets
+        @idobj          = HT::Item::ID.new(id, pairtree_root: pairtree_root)
+        @mets           = mets.nil? ? HT::Item::MetsFile.new(@idobj.metsfile_path) : mets
         @pagelikes      = self.read_pagelikes_from_mets(@mets)
         @pagelikes_hash = @pagelikes.reduce({}) {|h, p| h[p.order] = p; h}
         @zipfileroot    = @idobj.pair_translated_barcode
@@ -76,24 +76,24 @@ module HT
       end
 
 
-        def pagelike(num)
-          @pagelikes_hash[num]
-        end
-
-        alias_method :[], :pagelike
-
-        def count
-          @pagelikes.count
-        end
-
-        alias_method :size, :count
-
-        # Need to take something like 1..10, 11, 22, 33..100 and flatten it into
-        # an array of sequence numbers
-        def flat_list_of_pagelike_numbers(*args)
-          args.map {|x| Array(x)}.flatten
-        end
-
+      def pagelike(num)
+        @pagelikes_hash[num]
       end
+
+      alias_method :[], :pagelike
+
+      def count
+        @pagelikes.count
+      end
+
+      alias_method :size, :count
+
+      # Need to take something like 1..10, 11, 22, 33..100 and flatten it into
+      # an array of sequence numbers
+      def flat_list_of_pagelike_numbers(*args)
+        args.map {|x| Array(x)}.flatten
+      end
+
     end
   end
+end
