@@ -11,24 +11,20 @@ module HT
 
         class << self
           def filename_from_file_entry_node(file_entry_node)
-            file_entry_node.css("METS|FLocat[OTHERLOCTYPE=SYSTEM]").first.get_attribute('xlink:href')
+            x = file_entry_node.xpath('METS:FLocat[@OTHERLOCTYPE=\'SYSTEM\']/@xlink:href')
           end
 
           def source_mets_name(mets_node)
-            f     = mets_node.css("METS|fileGrp[USE=\"source METS\"] METS|file")
-            inner = f.css("METS|FLocat[OTHERLOCTYPE=SYSTEM]").first
-            inner.get_attribute('xlink:href')
+            mets_node.xpath('METS:fileGrp[@USE="source METS"]/METS:file')
           end
 
           # @return [Array<Nokogiri::XMLNode] XML nodes for each file entry
-          def file_entries_of_type(mets_node, type: )
-            mets_node.css("METS|fileGrp[USE=#{type}] METS|file")
+         def file_entries_of_type(mets_node, type: )
+           mets_node.xpath("METS:mets/METS:fileSec/METS:fileGrp[@USE=\"#{type}\"]/METS:file")
           end
 
-          def volume_divs(mets_node, type: 'physical')
-            structMaps = mets_node.css("METS|structMap[TYPE=#{type}]")
-            raise "Multiple structmaps encountered!" if structMaps.size > 1
-            structMaps.first.css("METS|div METS|div")
+         def volume_divs(mets_node, type: 'physical')
+            mets_node.xpath("METS:mets/METS:structMap[1]/METS:div[@TYPE=\"volume\"]/METS:div")
           end
 
         end
@@ -45,8 +41,8 @@ module HT
                               self.load_mets(File.open(file_or_filename))
                             end
         @source_mets_name = NokogiriQueries.source_mets_name(self.mets_node)
-        @mfes             = {}
         @pagelikes        = []
+        @mfe = {}
       end
 
       def load_mets(io)
@@ -88,8 +84,6 @@ module HT
           entries
         end
       end
-
-
     end
   end
 end

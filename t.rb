@@ -2,18 +2,23 @@ $:.unshift 'lib'
 require 'ht/item'
 htid = "ien.35556021287453"
 
+text_dehyphenate = /(\p{L}{2})\-\n(\p{L}{2})/
+
 ids = File.open('test_ids.txt').each_line.map(&:chomp)
+puts "STARTING..."
 ids.each do |htid|
   begin
     id = HT::Item::ID.new(htid)
     size = (File.size(id.metsfile_path) / 1024.0).floor
-    print "%10dk %25s" % [size, id.id]
     item = HT::Item.new(htid)
   rescue => e
-    "Trouble getting #{htid}: #{e}"
-    next
+    puts "Trouble getting #{htid}: #{e}"
+    raise e
   end
-  texts = item.text_blocks.map{|str| str.force_encoding(Encoding::UTF_8)}
-  puts '  text: %10dk' % [(texts.join(' ').size / 1024.0).floor]
+  texts = item.text_blocks.map{|str| str.force_encoding(Encoding::UTF_8)}.join('').gsub(text_dehyphenate, "$1$2")
+  puts "%10dk %25s  text: %10dk" % [size, id.id, (texts.size / 1024.0).floor]
+#  puts id.metsfile_path
+
 end
+
 

@@ -31,7 +31,8 @@ module HT
       def dir(htid=id)
         prefix_components = [@root, namespace, 'pairtree_root']
         ptb = pair_translated_barcode(htid)
-        relpath = ptb.scan(/../)
+        #        relpath = ptb.scan(/../)
+        relpath = ptb.chars.each_slice(2).map{|x| x.join('')}
         File.join(prefix_components, relpath, pair_translated_barcode(htid))
       end
 
