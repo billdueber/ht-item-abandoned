@@ -19,7 +19,7 @@ module HT
     def text_blocks(files_we_want = @metadata.ordered_zipfile_internal_paths(:text))
       is_interesting = generate_file_selector(files_we_want)
       hash_of_texts  = @zipfile.contents_hashed_by_name(is_interesting)
-      files_we_want.map {|fname| hash_of_texts[fname]}
+      files_we_want.map {|fname| hash_of_texts[fname].force_encoding(Encoding::UTF_8)}
     end
   end
 end
