@@ -21,8 +21,8 @@ module HT
       def initialize(id, pairtree_root: HT::SDRDATAROOT, mets: nil)
         @idobj          = HT::Item::ID.new(id, pairtree_root: pairtree_root)
         @mets           = mets.nil? ? HT::Item::MetsFile.new(@idobj.metsfile_path) : mets
-        @pagelikes      = self.read_pagelikes_from_mets(@mets)
-        @pagelikes_hash = @pagelikes.reduce({}) {|h, p| h[p.order] = p; h}
+#        @pagelikes      = self.read_pagelikes_from_mets(@mets)
+#        @pagelikes_hash = @pagelikes.reduce({}) {|h, p| h[p.order] = p; h}
         @zipfileroot    = @idobj.pair_translated_barcode
       end
 
@@ -43,7 +43,7 @@ module HT
       def mets_file_entries(mets: self.mets, filegrps: HT::PAGE_TYPES.keys)
         unless defined? @mfes
           @mfes = {}
-          filegrps.each do |filegrp|
+          Array(filegrps).each do |filegrp|
             mets.mets_file_entries(filegrp).each {|mfe| @mfes[mfe.id] = mfe}
           end
         end
