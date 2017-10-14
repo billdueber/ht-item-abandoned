@@ -1,5 +1,6 @@
 $:.unshift 'lib'
 require 'ht/item'
+require 'ht/item/metadata2'
 require 'benchmark/ips'
 # Parsing the mets file and creating the metadata object is turning out
 # to be a real bottleneck. We'll try some stuff
@@ -15,32 +16,18 @@ def get_metadata_hti
   entries  = metadata.ordered_zipfile_internal_paths(:text)
 end
 
-# Now let's try with just lots of xpath calls instead
-# of making lots of objects
-def get_metadata_nokogiri_xpath
-  mets = Nokogiri.XML(File.open(FILENAME))
-  textfilenames = {}
-  mets.xpath("METS:mets/METS:fileSec/METS:fileGrp[@USE=\"ocr\"]/METS:file").each do |tf|
-    id = tf.attr('ID')
-    filename = tf.xpath('METS:FLocat[1]/@xlink:href[1]').first.value
-    textfilenames[id] = filename
-  end
-
-  zipfilenames = {}
-  textfilenames.keys.each do |id|
-    order =  mets.xpath("METS:mets/METS:structMap[1]/METS:div[@TYPE=\"volume\"]/METS:div/METS:fptr[@FILEID=\"#{id}\"]/../@ORDER").first.value
-    zipfilenames[order] = File.join("zipfileprefix!", textfilenames[id])
-  end
+def get_metadata2
+  md2 = HT::Item::Metadata2.new(ID, mets_file_name: FILENAME)
+  entries  = md2.ordered_zipfile_internal_text_paths
 end
 
-REPEAT = 20
-
 Benchmark.ips do |x|
-  x.report('ht/item') do
+  x.config(:time => 10, :warmup => 5)
+  x.report('metadata1') do
     get_metadata_hti
   end
-  x.report('ht/xpath') do
-    get_metadata_nokogiri_xpath
+  x.report('metadata2') do
+    get_metadata2
   end
 
   x.compare!

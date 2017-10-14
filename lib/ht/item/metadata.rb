@@ -21,8 +21,8 @@ module HT
       def initialize(id, pairtree_root: HT::SDRDATAROOT, mets: nil)
         @idobj          = HT::Item::ID.new(id, pairtree_root: pairtree_root)
         @mets           = mets.nil? ? HT::Item::MetsFile.new(@idobj.metsfile_path) : mets
-#        @pagelikes      = self.read_pagelikes_from_mets(@mets)
-#        @pagelikes_hash = @pagelikes.reduce({}) {|h, p| h[p.order] = p; h}
+        @pagelikes      = self.read_pagelikes_from_mets(@mets)
+        @pagelikes_hash = @pagelikes.reduce({}) {|h, p| h[p.order] = p; h}
         @zipfileroot    = @idobj.pair_translated_barcode
       end
 
