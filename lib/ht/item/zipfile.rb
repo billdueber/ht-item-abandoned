@@ -1,5 +1,4 @@
 require 'zip'
-require 'ht/item/metadata'
 
 module HT
   class Item

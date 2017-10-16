@@ -19,19 +19,18 @@ module HT
       # Return a hash mapping {filepath => contents}
       def contents_hashed_by_name(is_interesting_lambda)
         contents          = {}
-        stream            = ZipInputStream.new(File.open(@path, 'rb').to_inputstream)
-        # z = java.util.zip.ZipFile.new(@path)
+        stream            = ZipInputStream.new(java.io.FileInputStream.new(@path))
 
         while e = stream.get_next_entry
-          next unless is_interesting_lambda.(e)
-          contents[e.name] = BufferedReader.new(InputStreamReader.new(stream)).lines().parallel().collect(Collectors.joining("\n"));
-        end
+          unless is_interesting_lambda.(e)
+            next
+          end
 
-        # z.entries.each do |e|
-        #   next unless is_interesting_lambda.(e)
-        #   instream = z.get_input_stream(e)
-        #   contents[e.name] = BufferedReader.new(InputStreamReader.new(instream)).lines().parallel().collect(Collectors.joining("\n"));
-        # end
+          isr = InputStreamReader.new(stream, 'UTF-8')
+          br = BufferedReader.new(isr)
+          txt = br.lines.collect(Collectors.joining("\n"))
+          contents[e.name] = txt
+        end
         contents
       end
 
