@@ -21,7 +21,7 @@ module HT
       def initialize(id, pairtree_root: HT::SDRDATAROOT, metsfile_path: nil)
         @idobj          = HT::Item::ID.new(id, pairtree_root: pairtree_root)
         metsfile_path ||= @idobj.metsfile_path
-        @mets = Nokogiri.XML(File.open(mets_file_name))
+        @mets = Nokogiri.XML(File.open(metsfile_path))
         @zipfileroot    = @idobj.pair_translated_barcode
       end
 
