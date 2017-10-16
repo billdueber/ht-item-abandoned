@@ -19,7 +19,8 @@ module HT
     end
 
     def generate_file_selector(wanted)
-      ->(e) { wanted.include? e.name}
+      is_wanted = wanted.reduce({}) {|h, k| h[k] = true; h}
+      ->(e) { is_wanted.has_key? e.name}
     end
 
     def text_blocks(files_we_want = @metadata.ordered_zipfile_internal_text_paths)
