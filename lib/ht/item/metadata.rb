@@ -41,9 +41,9 @@ module HT
       end
 
       def mets_file_entries(mets: self.mets, filegrps: HT::PAGE_TYPES.keys)
-        if @mfes.nil?
+        unless defined? @mfes
           @mfes = {}
-          filegrps.each do |filegrp|
+          Array(filegrps).each do |filegrp|
             mets.mets_file_entries(filegrp).each {|mfe| @mfes[mfe.id] = mfe}
           end
         end

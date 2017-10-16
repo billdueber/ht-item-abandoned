@@ -2,7 +2,23 @@ $:.unshift 'lib'
 require 'ht/item'
 htid = "ien.35556021287453"
 
-mets = HT::Item::MetsFile.new(File.open('35556021287453.mets.xml'))
-puts "Got mets file"
-metadata = HT::Item::Metadata.new(htid, mets: mets)
-puts "Got metadata with #{metadata.count} pagelikes"
+text_dehyphenate = /(\p{L}{2})\-\n(\p{L}{2})/
+
+ids = File.open('test_ids.txt').each_line.map(&:chomp)
+puts "STARTING..."
+ids.each do |htid|
+  begin
+    id = HT::Item::ID.new(htid)
+    size = (File.size(id.metsfile_path) / 1024.0).floor
+    item = HT::Item.new(htid)
+  rescue => e
+    puts "Trouble getting #{htid}: #{e}"
+    raise e
+  end
+  texts = item.text_blocks.map{|str| str.force_encoding(Encoding::UTF_8)}.join('').gsub(text_dehyphenate, "$1$2")
+  puts "%10dk %25s  text: %10dk" % [size, id.id, (texts.size / 1024.0).floor]
+#  puts id.metsfile_path
+
+end
+
+

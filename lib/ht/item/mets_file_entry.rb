@@ -17,7 +17,7 @@ module HT
         @size          = size.to_i
         @sequence      = sequence
         @mimetype      = mimetype
-        @created = DateTime.parse(created)
+        @created       = DateTime.parse(created)
         @checksum      = checksum
         @filename      = filename
       end

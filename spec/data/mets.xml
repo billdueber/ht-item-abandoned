@@ -1,5 +1,13 @@
 <?xml version="1.0"?>
-<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:PREMIS="info:lc/xmlns/premis-v2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:HT="http://www.hathitrust.org/ht_extension" xmlns:HTPREMIS="http://www.hathitrust.org/premis_extension" OBJID="loc.ark:/13960/t9w09k00s" PROFILE="http://www.hathitrust.org/documents/hathitrust-mets-profile2.1.xml" xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd info:lc/xmlns/premis-v2 http://www.loc.gov/standards/premis/v2/premis-v2-0.xsd">
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:METS="http://www.loc.gov/METS/"
+           xmlns:PREMIS="info:lc/xmlns/premis-v2"
+           xmlns:xlink="http://www.w3.org/1999/xlink"
+           xmlns:HT="http://www.hathitrust.org/ht_extension"
+           xmlns:HTPREMIS="http://www.hathitrust.org/premis_extension"
+           OBJID="loc.ark:/13960/t9w09k00s"
+           PROFILE="http://www.hathitrust.org/documents/hathitrust-mets-profile2.1.xml"
+           xsi:schemaLocation="http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd info:lc/xmlns/premis-v2 http://www.loc.gov/standards/premis/v2/premis-v2-0.xsd">
   <METS:metsHdr ID="HDR1" CREATEDATE="2011-03-19T13:33:57Z" RECORDSTATUS="REV" LASTMODDATE="2015-05-16T12:33:08Z">
     <METS:agent TYPE="ORGANIZATION" ROLE="CREATOR">
       <METS:name>HathiTrust</METS:name>
