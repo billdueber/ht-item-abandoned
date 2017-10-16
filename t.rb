@@ -1,8 +1,12 @@
 $:.unshift 'lib'
 require 'ht/item'
-htid = "ien.35556021287453"
 
 text_dehyphenate = /(\p{L}{2})\-\n(\p{L}{2})/
+
+# Approximate speed for this file on grog:
+#  MRI: 200 items in 390 seconds    ≈ 0.5 items/second
+#  JRuby: 1000 items in 468 seconds ≈ 2.1 items/second
+
 
 ids = File.open('test_ids.txt').each_line.map(&:chomp)
 puts "STARTING..."
