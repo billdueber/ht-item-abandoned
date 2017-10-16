@@ -18,9 +18,9 @@ module HT
       # Forward much of the interesting stuff to id/mets objects
       def_delegators :@idobj, :id, :dir, :namespace, :barcode, :zipfile_path
 
-      def initialize(id, pairtree_root: HT::SDRDATAROOT, mets_file_name: nil)
+      def initialize(id, pairtree_root: HT::SDRDATAROOT, metsfile_path: nil)
         @idobj          = HT::Item::ID.new(id, pairtree_root: pairtree_root)
-        mets_file_name ||= @idobj.metsfile_path
+        metsfile_path ||= @idobj.metsfile_path
         @mets = Nokogiri.XML(File.open(mets_file_name))
         @zipfileroot    = @idobj.pair_translated_barcode
       end

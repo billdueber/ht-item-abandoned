@@ -11,9 +11,9 @@ end
 module HT
   class Item
     def initialize(id, pairtree_root: HT::SDRDATAROOT,
-                   mets: nil,
+                   metsfile_path: nil,
                    zipfile: nil)
-      @metadata = Metadata.new(id, pairtree_root: pairtree_root, mets: mets)
+      @metadata = Metadata.new(id, pairtree_root: pairtree_root, metsfile_path: metsfile_path)
       @zipfile  = zipfile.nil? ? Zipfile.new(@metadata.zipfile_path) : zipfile
     end
 
