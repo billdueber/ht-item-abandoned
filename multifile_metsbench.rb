@@ -24,7 +24,7 @@ end
 def get_metadata3(htid)
   id = HT::Item::ID.new(htid)
   md3 = HT::Item::Metadata3.new(htid, mets_file_name: id.metsfile_path)
-  entries  = md3.ordered_zipfile_internal_text_paths=
+  entries  = md3.ordered_zipfile_internal_text_paths
 end
 
 Benchmark.ips do |x|
