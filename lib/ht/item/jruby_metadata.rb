@@ -8,9 +8,10 @@ require 'forwardable'
 # the order of the zipfile names. So let's just do that.
 #
 #
-# Arrrrgh. Still getting out of memory errors.
-# Let's try again with native Java stuff
-
+# Nokogiri under JRuby creates a zillion anonymous classes that
+# slow things down to a crawl and result in out of memory errors,
+# so on the jruby side we'll go mostly-java.
+#
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;

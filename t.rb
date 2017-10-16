@@ -4,8 +4,9 @@ require 'ht/item'
 text_dehyphenate = /(\p{L}{2})\-\n(\p{L}{2})/
 
 # Approximate speed for this file on grog:
-#  MRI: 200 items in 390 seconds    ≈ 0.5 items/second
-#  JRuby: 1000 items in 468 seconds ≈ 2.1 items/second
+#  MRI:         200 items in 390 seconds ≈ 0.5 items/second
+#  JRuby:      1000 items in 468 seconds ≈ 2.1 items/second
+#  JRuby+indy: 1000 items in 376 seconds ≈ 2.6 items/second
 
 
 ids = File.open('test_ids.txt').each_line.map(&:chomp)
