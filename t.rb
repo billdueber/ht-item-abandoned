@@ -11,7 +11,7 @@ text_dehyphenate = /(\p{L}{2})\-\n(\p{L}{2})/
 
 ids = File.open('test_ids.txt').each_line.map(&:chomp)
 puts "STARTING..."
-ids.take(200).each do |htid|
+ids.each do |htid|
   begin
     id = HT::Item::ID.new(htid)
     size = (File.size(id.metsfile_path) / 1024.0).floor
