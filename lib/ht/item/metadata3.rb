@@ -23,12 +23,13 @@ import javax.xml.xpath.XPathFactory;
 
 module HT
   class Item
-    class Metadata2
+    class Metadata3
 
       class NS
         include NamespaceContext
         MAP = {
-            'METS' => "http://www.loc.gov/METS/",
+          'METS'  => "http://www.loc.gov/METS/",
+          'xlink' => "http://www.w3.org/1999/xlink"
         }
 
         def get_prefix(*args)
@@ -47,18 +48,38 @@ module HT
       extend Forwardable
       attr_reader :idobj, :zipfileroot, :mets
 
-      # Forward much of the interesting stuff to id/mets objects
+      # Forward much of the interesting stuff to id object
       def_delegators :@idobj, :id, :dir, :namespace, :barcode, :zipfile_path
 
-      BUILDERFACTORY = DocumentBuilderFactory.newInstance.setNamespaceAware(true)
-      BUILDER = builderfactory.newDocumentBuilder
+      BUILDERFACTORY = DocumentBuilderFactory.newInstance
+      BUILDERFACTORY.setNamespaceAware(true)
+      BUILDER = BUILDERFACTORY.newDocumentBuilder
 
+
+      def self.new_compiled_xpath(str)
+        xp = XPathFactory.newInstance.newXPath
+        xp.setNamespaceContext(NS.new)
+        xp.compile(str)
+      end
 
       def initialize(id, pairtree_root: HT::SDRDATAROOT, mets_file_name: nil)
-        @idobj          = HT::Item::ID.new(id, pairtree_root: pairtree_root)
+        @idobj         = HT::Item::ID.new(id, pairtree_root: pairtree_root)
         mets_file_name ||= @idobj.metsfile_path
-        @mets = BUILDER.parse(File.open(mets_file_name).to_inputstream)
-        @zipfileroot    = @idobj.pair_translated_barcode
+        @mets          = BUILDER.parse(File.open(mets_file_name).to_inputstream)
+        @zipfileroot   = @idobj.pair_translated_barcode
+        @filexpaths    = {}
+      end
+
+
+      def order_for_fileid(id, mets = self.mets)
+        @filexpaths[id] ||= begin
+          xpathstr = "METS:mets/METS:structMap[1]/METS:div[@TYPE=\"volume\"]/METS:div/METS:fptr[@FILEID=\"#{id}\"]/../@ORDER"
+          xp       = XPathFactory.newInstance.newXPath
+          xp.setNamespaceContext(NS.new)
+          xp.compile(xpathstr)
+        end
+        @filexpaths[id].evaluate(mets)
+
       end
 
       def ordered_zipfile_internal_text_paths
@@ -68,23 +89,30 @@ module HT
         # Get them all out of the struct so we have the order
         zipfilenames = {}
         textfile_names.keys.each do |id|
-          order =  mets.xpath("METS:mets/METS:structMap[1]/METS:div[@TYPE=\"volume\"]/METS:div/METS:fptr[@FILEID=\"#{id}\"]/../@ORDER").first.value
+          order                    = order_for_fileid(id)
           zipfilenames[order.to_i] = File.join(@zipfileroot, textfile_names[id])
         end
 
         # And order them
-        zipfilenames.keys.sort.map{|order| zipfilenames[order]}
+        zipfilenames.keys.sort.map {|order| zipfilenames[order]}
       end
+
+
+      TEXTFILEPATH = self.new_compiled_xpath("METS:mets/METS:fileSec/METS:fileGrp[@USE=\"ocr\"]/METS:file/METS:FLocat[1]")
 
       def textfile_names_hashed_by_id
         textfilenames = {}
-        mets.xpath("METS:mets/METS:fileSec/METS:fileGrp[@USE=\"ocr\"]/METS:file").each do |tf|
-          id = tf.attr('ID')
-          filename = tf.xpath('METS:FLocat[1]/@xlink:href[1]').first.value
+
+        nodes = TEXTFILEPATH.evaluate(mets, XPathConstants::NODESET)
+        nodes.length.times do |i|
+          item              = nodes.item(i)
+          id                = item.get_parent_node.get_attribute 'ID'
+          filename          = item.get_attribute('xlink:href')
           textfilenames[id] = filename
         end
         textfilenames
       end
+
 
     end
   end

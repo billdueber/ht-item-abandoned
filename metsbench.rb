@@ -1,7 +1,9 @@
 $:.unshift 'lib'
 require 'ht/item'
 require 'ht/item/metadata2'
+require 'ht/item/metadata3'
 require 'benchmark/ips'
+
 # Parsing the mets file and creating the metadata object is turning out
 # to be a real bottleneck. We'll try some stuff
 
@@ -21,6 +23,12 @@ def get_metadata2
   entries  = md2.ordered_zipfile_internal_text_paths
 end
 
+def get_metadata3
+  md3 = HT::Item::Metadata3.new(ID, mets_file_name: FILENAME)
+  entries  = md3.ordered_zipfile_internal_text_paths
+
+end
+
 Benchmark.ips do |x|
   x.config(:time => 10, :warmup => 5)
   x.report('metadata1') do
@@ -28,6 +36,9 @@ Benchmark.ips do |x|
   end
   x.report('metadata2') do
     get_metadata2
+  end
+  x.report('metadata3') do
+    get_metadata3
   end
 
   x.compare!
