@@ -26,9 +26,9 @@ module HT
       end
 
       def ordered_zipfile_internal_text_paths
+        puts "IN HERE!!!"
         # First, get all the textfiles
         textfile_names = textfile_names_hashed_by_id
-
         # Get them all out of the struct so we have the order
         zipfilenames = {}
         textfile_names.keys.each do |id|
@@ -45,6 +45,7 @@ module HT
         mets.xpath("METS:mets/METS:fileSec/METS:fileGrp[@USE=\"ocr\"]/METS:file").each do |tf|
           id = tf.attr('ID')
           filename = tf.xpath('METS:FLocat[1]/@xlink:href[1]').first.value
+          puts "Adding #{filename}"
           textfilenames[id] = filename
         end
         textfilenames
