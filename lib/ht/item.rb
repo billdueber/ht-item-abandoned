@@ -1,6 +1,11 @@
 require 'ht/item/version'
 require 'ht/item/metadata'
-require 'ht/item/zipfile'
+if defined? JRUBY_VERSION
+  require 'ht/item/jruby_zipfile'
+else
+  require 'ht/item/zipfile'
+end
+
 
 
 module HT
