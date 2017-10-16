@@ -1,97 +1,53 @@
 require 'ht/constants'
-require 'ht/item/pagelike'
 require 'ht/item/id'
 require 'nokogiri'
 require 'forwardable'
-require 'zip'
 
+
+# The only thing the item is actually asking of the metadata right
+# now is for a list of the interesting ids (e.g., text nodes) and
+# the order of the zipfile names. So let's just do that.
+#
 
 module HT
   class Item
-    class Metadata
+    class Metadata2
       extend Forwardable
-      include Enumerable
-
-
-      attr_reader :idobj, :pagelikes, :zipfileroot, :mets
+      attr_reader :idobj, :zipfileroot, :mets
 
       # Forward much of the interesting stuff to id/mets objects
       def_delegators :@idobj, :id, :dir, :namespace, :barcode, :zipfile_path
 
-      def initialize(id, pairtree_root: HT::SDRDATAROOT, mets: nil)
+      def initialize(id, pairtree_root: HT::SDRDATAROOT, mets_file_name: nil)
         @idobj          = HT::Item::ID.new(id, pairtree_root: pairtree_root)
-        @mets           = mets.nil? ? HT::Item::MetsFile.new(@idobj.metsfile_path) : mets
-        @pagelikes      = self.read_pagelikes_from_mets(@mets)
-        @pagelikes_hash = @pagelikes.reduce({}) {|h, p| h[p.order] = p; h}
+        mets_file_name ||= @idobj.metsfile_path
+        @mets = Nokogiri.XML(File.open(mets_file_name))
         @zipfileroot    = @idobj.pair_translated_barcode
       end
 
-      def each
-        return enum_for(:each) unless block_given?
-        @pagelikes.each do |x|
-          yield x
+      def ordered_zipfile_internal_text_paths
+        # First, get all the textfiles
+        textfile_names = textfile_names_hashed_by_id
+
+        # Get them all out of the struct so we have the order
+        zipfilenames = {}
+        textfile_names.keys.each do |id|
+          order =  mets.xpath("METS:mets/METS:structMap[1]/METS:div[@TYPE=\"volume\"]/METS:div/METS:fptr[@FILEID=\"#{id}\"]/../@ORDER").first.value
+          zipfilenames[order.to_i] = File.join(@zipfileroot, textfile_names[id])
         end
+
+        # And order them
+        zipfilenames.keys.sort.map{|order| zipfilenames[order]}
       end
 
-      # TODO: move zipfile internal path logic into the zipfile
-      def ordered_zipfile_internal_paths(type = :text)
-        self.map do |p|
-          [@zipfileroot, p.filename(type)].join('/')
+      def textfile_names_hashed_by_id
+        textfilenames = {}
+        mets.xpath("METS:mets/METS:fileSec/METS:fileGrp[@USE=\"ocr\"]/METS:file").each do |tf|
+          id = tf.attr('ID')
+          filename = tf.xpath('METS:FLocat[1]/@xlink:href[1]').first.value
+          textfilenames[id] = filename
         end
-      end
-
-      def mets_file_entries(mets: self.mets, filegrps: HT::PAGE_TYPES.keys)
-        unless defined? @mfes
-          @mfes = {}
-          Array(filegrps).each do |filegrp|
-            mets.mets_file_entries(filegrp).each {|mfe| @mfes[mfe.id] = mfe}
-          end
-        end
-        @mfes
-      end
-
-
-      def read_pagelikes_from_mets(mets)
-        mets.volume_divs.reduce([]) do |acc, vd|
-          pl = pagelike_from_volume_div(vd)
-          acc << pl
-          acc
-        end
-      end
-
-
-      # TODO: Use a real constructor for pagelike
-      # TODO: write a real method to add files to a pagelike
-      def pagelike_from_volume_div(vd)
-        Pagelike.new do |pl|
-          pl.order      = vd.get_attribute('ORDER').to_i
-          pl.labels     = (vd.get_attribute('LABEL') || "").split(/\s*,\s*/)
-          pl.type       = vd.get_attribute('TYPE')
-          pl.orderlabel = vd.get_attribute('ORDERLABEL')
-          vd.css('METS|fptr').each do |fptr|
-            id = fptr.get_attribute('FILEID')
-            pl.files << mets_file_entries[id]
-          end
-        end
-      end
-
-
-      def pagelike(num)
-        @pagelikes_hash[num]
-      end
-
-      alias_method :[], :pagelike
-
-      def count
-        @pagelikes.count
-      end
-
-      alias_method :size, :count
-
-      # Need to take something like 1..10, 11, 22, 33..100 and flatten it into
-      # an array of sequence numbers
-      def flat_list_of_pagelike_numbers(*args)
-        args.map {|x| Array(x)}.flatten
+        textfilenames
       end
 
     end
