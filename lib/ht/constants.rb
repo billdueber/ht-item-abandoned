@@ -8,6 +8,7 @@ module HT
     "image"    => :image
   }
 
+  CatalogSolrURL = 'http://solr-sdr-catalog:9033/catalog'
 
   SDRDATAROOT = (ENV["SDRDATAROOT"] || '/sdr1') + '/obj' #raise("SDRROOT env variable not set")
 
