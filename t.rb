@@ -4,9 +4,10 @@ require 'ht/item'
 text_dehyphenate = /(\p{L}{2})\-\n(\p{L}{2})/
 
 # Approximate speed for this file on grog:
-#  MRI:         200 items in 390 seconds ≈ 0.5 items/second
-#  JRuby:      1000 items in 468 seconds ≈ 2.1 items/second
-#  JRuby+indy: 1000 items in 376 seconds ≈ 2.6 items/second
+#  MRI:                   200 items in 390 seconds ≈ 0.5 items/second
+#  JRuby:                1000 items in 468 seconds ≈ 2.1 items/second
+#  JRuby+indy (default): 1000 items in 376 seconds ≈ 2.6 items/second ****
+#  JRuby+indy (all):     1000 items in 540 seconds ≈ 1.8 items/second
 
 
 ids = File.open('test_ids.txt').each_line.map(&:chomp)
@@ -23,7 +24,6 @@ ids.each do |htid|
   print "mets: %10dk %25s" % [size, id.id]
   texts = item.text_blocks.map{|str| str.force_encoding(Encoding::UTF_8)}.join('').gsub(text_dehyphenate, "$1$2")
   puts "  text: %10dk" % (texts.size / 1024.0).floor
-
 
 end
 
