@@ -7,7 +7,7 @@ module HT
     # one of several "places where we keep crap"
     # implementations that respond to something
     # like #contents_hashed_by_name
-    class Zipfile
+    module MRIZipfile
       def initialize(path)
         @path = path
       end

@@ -11,7 +11,7 @@ require 'forwardable'
 
 module HT
   class Item
-    class Metadata
+    module MRIMetadata
       extend Forwardable
       attr_reader :idobj, :zipfileroot, :mets
 

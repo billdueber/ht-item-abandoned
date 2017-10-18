@@ -24,7 +24,7 @@ java_import javax.xml.xpath.XPathFactory
 
 module HT
   class Item
-    class Metadata
+    module JRubyMetadata
 
       class NS
         include javax.xml.namespace.NamespaceContext

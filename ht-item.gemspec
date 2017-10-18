@@ -34,6 +34,8 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "rubyzip"
   spec.add_dependency "nokogiri" unless defined? JRUBY_VERSION
+
   spec.add_dependency "httpclient"
+
 
 end

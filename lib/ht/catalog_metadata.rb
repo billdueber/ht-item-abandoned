@@ -1,7 +1,12 @@
-require 'httpclient'
 require 'json'
 require 'ht/constants'
 require 'uri'
+
+# Suppress warning on load
+original_verbosity = $VERBOSE
+$VERBOSE = nil
+require 'httpclient'
+$VERBOSE = original_verbosity
 
 module HT
   class CatalogMetadata
