@@ -1,12 +1,6 @@
 require 'ht/item/version'
-if defined? JRUBY_VERSION
-  require 'ht/item/jruby_zipfile'
-  require 'ht/item/jruby_metadata'  
-else
-  require 'ht/item/zipfile'
-  require 'ht/item/metadata'
-end
-
+require 'ht/item/zipfile'
+require 'ht/item/metadata'
 
 
 module HT
@@ -20,7 +14,7 @@ module HT
 
     def generate_file_selector(wanted)
       is_wanted = wanted.reduce({}) {|h, k| h[k] = true; h}
-      ->(e) { is_wanted.has_key? e.name}
+      ->(e) {is_wanted.has_key? e.name}
     end
 
     def text_blocks(files_we_want = @metadata.ordered_zipfile_internal_text_paths)

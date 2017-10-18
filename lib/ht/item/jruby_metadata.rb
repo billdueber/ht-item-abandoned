@@ -13,13 +13,13 @@ require 'forwardable'
 # so on the jruby side we'll go mostly-java.
 #
 
-import javax.xml.namespace.NamespaceContext;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathFactory;
+java_import javax.xml.namespace.NamespaceContext
+java_import javax.xml.parsers.DocumentBuilder
+java_import javax.xml.parsers.DocumentBuilderFactory
+java_import javax.xml.xpath.XPath
+java_import javax.xml.xpath.XPathConstants
+java_import javax.xml.xpath.XPathExpression
+java_import javax.xml.xpath.XPathFactory
 
 
 module HT
@@ -27,7 +27,7 @@ module HT
     class Metadata
 
       class NS
-        include NamespaceContext
+        include javax.xml.namespace.NamespaceContext
         MAP = {
           'METS'  => "http://www.loc.gov/METS/",
           'xlink' => "http://www.w3.org/1999/xlink"

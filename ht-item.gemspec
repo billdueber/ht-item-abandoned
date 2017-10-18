@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.summary  = %q{A representation of an HT item (useful internally only)}
   spec.homepage = "https://github.com/hathitrust/ht-item"
   spec.license  = "MIT"
-  
+
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
   # to allow pushing to a single host or delete this section to allow pushing to any host.
   spec.metadata["allowed_push_host"] = "https://gems.www.lib.umich.edu/"
@@ -33,6 +33,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "simplecov"
 
   spec.add_dependency "rubyzip"
-  spec.add_dependency "nokogiri"
+  spec.add_dependency "nokogiri" unless defined? JRUBY_VERSION
+  spec.add_dependency "httpclient"
 
 end

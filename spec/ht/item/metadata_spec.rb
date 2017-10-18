@@ -8,8 +8,8 @@ describe HT::Item::Metadata do
 
   it "gets the zipfile internal paths" do
     zipfile_internal_paths = md.ordered_zipfile_internal_text_paths
-    expect(zipfile_internal_paths.first).must_match /00001/
-    expect(zipfile_internal_paths.last).must_match /00156/
+    expect(zipfile_internal_paths.first).must_match(/00001/)
+    expect(zipfile_internal_paths.last).must_match(/00156/)
   end
 
 end

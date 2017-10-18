@@ -1,8 +1,4 @@
-java_import java.util.zip.ZipInputStream
-java_import java.util.zip.ZipFile
-java_import java.io.InputStreamReader
-java_import java.io.BufferedReader
-java_import java.util.stream.Collectors
+require 'zip'
 
 module HT
   class Item
@@ -19,17 +15,10 @@ module HT
       # Return a hash mapping {filepath => contents}
       def contents_hashed_by_name(is_interesting_lambda)
         contents          = {}
-        stream            = ZipInputStream.new(java.io.FileInputStream.new(@path))
-
+        stream            = Zip::InputStream.new(@path)
         while e = stream.get_next_entry
-          unless is_interesting_lambda.(e)
-            next
-          end
-
-          isr = InputStreamReader.new(stream, 'UTF-8')
-          br = BufferedReader.new(isr)
-          txt = br.lines.collect(Collectors.joining("\n"))
-          contents[e.name] = txt
+          next unless is_interesting_lambda.(e)
+          contents[e.name] = stream.read
         end
         contents
       end
