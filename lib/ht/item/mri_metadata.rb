@@ -1,7 +1,6 @@
 require 'ht/constants'
 require 'ht/item/id'
 require 'nokogiri'
-require 'forwardable'
 
 
 # The only thing the item is actually asking of the metadata right
@@ -12,13 +11,11 @@ require 'forwardable'
 module HT
   class Item
     module MRIMetadata
-      extend Forwardable
-      attr_reader :idobj, :zipfileroot, :mets
 
-      # Forward much of the interesting stuff to id/mets objects
-      def_delegators :@idobj, :id, :dir, :namespace, :barcode, :zipfile_path
-
-      def initialize(id, pairtree_root: HT::SDRDATAROOT, metsfile_path: nil)
+      def initialize(id,
+                     catalog_metadata_lookup: HT::CatalogMetadata.new,
+                     pairtree_root: HT::SDRDATAROOT,
+                     metsfile_path: nil)
         super
         metsfile_path ||= @idobj.metsfile_path
         @mets = Nokogiri.XML(File.open(metsfile_path))
@@ -46,6 +43,10 @@ module HT
           textfilenames[id] = filename
         end
         textfilenames
+      end
+
+      def get_allfields_from_marcxml(marcxml)
+        Nokogiri.XML(marcxml).xpath('collection/record[1]/datafield').reject{|n| n.attr('tag').to_i <= 10}.map(&:text)
       end
 
     end

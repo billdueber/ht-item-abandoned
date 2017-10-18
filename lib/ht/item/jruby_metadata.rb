@@ -1,6 +1,5 @@
 require 'ht/constants'
 require 'ht/item/id'
-require 'forwardable'
 
 
 # The only thing the item is actually asking of the metadata right
@@ -46,11 +45,6 @@ module HT
         end
       end
 
-      extend Forwardable
-      attr_reader :idobj, :zipfileroot, :mets
-
-      # Forward much of the interesting stuff to id object
-      def_delegators :@idobj, :id, :dir, :namespace, :barcode, :zipfile_path
 
       BUILDERFACTORY = DocumentBuilderFactory.newInstance
       BUILDERFACTORY.setNamespaceAware(true)
@@ -63,7 +57,10 @@ module HT
         xp.compile(str)
       end
 
-      def initialize(id, pairtree_root: HT::SDRDATAROOT, metsfile_path: nil)
+      def initialize(id,
+                     catalog_metadata_lookup: HT::CatalogMetadata.new,
+                     pairtree_root: HT::SDRDATAROOT,
+                     metsfile_path: nil)
         super
         metsfile_path ||= @idobj.metsfile_path
         @mets          = BUILDER.parse(File.open(metsfile_path).to_inputstream)
