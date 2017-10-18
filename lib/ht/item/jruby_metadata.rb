@@ -64,12 +64,12 @@ module HT
       end
 
       def initialize(id, pairtree_root: HT::SDRDATAROOT, metsfile_path: nil)
-        @idobj         = HT::Item::ID.new(id, pairtree_root: pairtree_root)
+        super
         metsfile_path ||= @idobj.metsfile_path
         @mets          = BUILDER.parse(File.open(metsfile_path).to_inputstream)
-        @zipfileroot   = @idobj.pair_translated_barcode
         @filexpaths    = {}
         @order_by_fileid = nil
+
       end
 
 

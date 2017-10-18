@@ -23,10 +23,6 @@ module HT
         contents
       end
 
-      IS_TEXT = ->(e) { e.name =~ /0+\d+\.txt\Z/}
-      def text_contents_hashed_by_name
-        contents_hashed_by_name(IS_TEXT)
-      end
 
     end
 

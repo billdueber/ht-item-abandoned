@@ -19,10 +19,9 @@ module HT
       def_delegators :@idobj, :id, :dir, :namespace, :barcode, :zipfile_path
 
       def initialize(id, pairtree_root: HT::SDRDATAROOT, metsfile_path: nil)
-        @idobj          = HT::Item::ID.new(id, pairtree_root: pairtree_root)
+        super
         metsfile_path ||= @idobj.metsfile_path
         @mets = Nokogiri.XML(File.open(metsfile_path))
-        @zipfileroot    = @idobj.pair_translated_barcode
       end
 
       def ordered_zipfile_internal_text_paths
