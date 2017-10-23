@@ -11,7 +11,10 @@ module HT
   class Item
     extend Forwardable
 
-    def_delegators :@metadata, :id, :dir, :namespace, :barcode, :zipfile_path
+    def_delegators :@metadata, :id, :dir, :namespace, :barcode, :zipfile_path,
+                   :ordered_zipfile_internal_text_paths,
+                   :ingest_date, :rights, :collection_code, :digitization_source,
+                   :held_by
 
     attr_accessor :catalog_metadata_lookup
 
@@ -38,10 +41,6 @@ module HT
       is_interesting = generate_file_selector(files_we_want)
       hash_of_texts  = @zipfile.contents_hashed_by_name(is_interesting)
       files_we_want.map {|fname| hash_of_texts[fname].force_encoding(Encoding::UTF_8)}
-    end
-
-    def catalog_metadata
-      catalog_metadata_lookup[id]
     end
 
 

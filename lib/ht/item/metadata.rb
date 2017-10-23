@@ -1,5 +1,6 @@
 require 'ht/catalog_metadata'
 require 'forwardable'
+require 'datetime'
 
 module HT
   class Item
@@ -59,7 +60,7 @@ module HT
 
       def metadata_solr_document
         cm                      = catalog_metadata
-        ht_json                 = JSON.parse(cm['ht_json'.freeze]).find {|x| x['htid'.freeze] == id}
+        @ht_json                 = JSON.parse(cm['ht_json'.freeze]).find {|x| x['htid'.freeze] == id}
         @metadata_solr_document = UNCHANGED_CATALOG_FIELDS.reduce({}) {|h, k| h[k] = cm[k]; h}
 
         @metadata_solr_document['id'] = id
@@ -67,14 +68,34 @@ module HT
         @metadata_solr_document['allfields'] = allfields(cm['fullrecord'])
 
 
-        @metadata_solr_document.merge! ht_json_metadata(ht_json)
+        @metadata_solr_document.merge! ht_json_metadata(@ht_json)
         @metadata_solr_document.merge! dates(cm, @metadata_solr_document)
-
-
       end
 
       def catalog_metadata(id = self.id)
         @cm ||= catalog_metadata_lookup[id]
+      end
+
+      # Pull stuff out of the ht_json
+
+      def ingest_date
+        DateTime.parse @ht_json['injest']
+      end
+
+      def rights
+        @ht_json['rights']
+      end
+
+      def collection_code
+        @ht_json['collection_code']
+      end
+
+      def digitization_source
+        @ht_json['dig_source']
+      end
+
+      def held_by
+        @ht_json['heldby']
       end
 
 
