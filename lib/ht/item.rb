@@ -14,6 +14,7 @@ module HT
     def_delegators :@metadata, :id, :dir, :namespace, :barcode, :zipfile_path
 
     attr_accessor :catalog_metadata_lookup
+
     def initialize(id,
                    catalog_metadata_lookup: HT::CatalogMetadata.new,
                    pairtree_root: HT::SDRDATAROOT,
@@ -22,6 +23,10 @@ module HT
       @metadata = Metadata.new(id, pairtree_root: pairtree_root, metsfile_path: metsfile_path)
       @zipfile  = zipfile.nil? ? Zipfile.new(@metadata.zipfile_path) : zipfile
       @catalog_metadata_lookup = catalog_metadata_lookup
+    end
+
+    def inspect
+      "HT::Item id: #{id}"
     end
 
     def generate_file_selector(wanted)
