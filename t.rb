@@ -8,6 +8,8 @@ text_dehyphenate = /(\p{L}{2})\-\n(\p{L}{2})/
 #  JRuby:                1000 items in 468 seconds ≈ 2.1 items/second
 #  JRuby+indy (default): 1000 items in 376 seconds ≈ 2.6 items/second ****
 #  JRuby+indy (all):     1000 items in 540 seconds ≈ 1.8 items/second
+#
+# Perl: produce solr documents: 1000 items 1103 seconds ≈ 0.9 items/second
 
 
 ids = File.open('test_ids.txt').each_line.map(&:chomp)

@@ -1,6 +1,5 @@
 require 'ht/constants'
 require 'ht/item/id'
-require 'forwardable'
 
 
 # The only thing the item is actually asking of the metadata right
@@ -13,21 +12,21 @@ require 'forwardable'
 # so on the jruby side we'll go mostly-java.
 #
 
-import javax.xml.namespace.NamespaceContext;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathFactory;
+java_import javax.xml.namespace.NamespaceContext
+java_import javax.xml.parsers.DocumentBuilder
+java_import javax.xml.parsers.DocumentBuilderFactory
+java_import javax.xml.xpath.XPath
+java_import javax.xml.xpath.XPathConstants
+java_import javax.xml.xpath.XPathExpression
+java_import javax.xml.xpath.XPathFactory
 
 
 module HT
   class Item
-    class Metadata
+    module JRubyMetadata
 
       class NS
-        include NamespaceContext
+        include javax.xml.namespace.NamespaceContext
         MAP = {
           'METS'  => "http://www.loc.gov/METS/",
           'xlink' => "http://www.w3.org/1999/xlink"
@@ -46,11 +45,6 @@ module HT
         end
       end
 
-      extend Forwardable
-      attr_reader :idobj, :zipfileroot, :mets
-
-      # Forward much of the interesting stuff to id object
-      def_delegators :@idobj, :id, :dir, :namespace, :barcode, :zipfile_path
 
       BUILDERFACTORY = DocumentBuilderFactory.newInstance
       BUILDERFACTORY.setNamespaceAware(true)
@@ -63,13 +57,16 @@ module HT
         xp.compile(str)
       end
 
-      def initialize(id, pairtree_root: HT::SDRDATAROOT, metsfile_path: nil)
-        @idobj         = HT::Item::ID.new(id, pairtree_root: pairtree_root)
+      def initialize(id,
+                     catalog_metadata_lookup: HT::CatalogMetadata.new,
+                     pairtree_root: HT::SDRDATAROOT,
+                     metsfile_path: nil)
+        super
         metsfile_path ||= @idobj.metsfile_path
         @mets          = BUILDER.parse(File.open(metsfile_path).to_inputstream)
-        @zipfileroot   = @idobj.pair_translated_barcode
         @filexpaths    = {}
         @order_by_fileid = nil
+
       end
 
 

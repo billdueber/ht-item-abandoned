@@ -1,26 +1,32 @@
 require 'ht/item/version'
-if defined? JRUBY_VERSION
-  require 'ht/item/jruby_zipfile'
-  require 'ht/item/jruby_metadata'  
-else
-  require 'ht/item/zipfile'
-  require 'ht/item/metadata'
-end
+require 'ht/item/zipfile'
+require 'ht/item/metadata'
+require 'ht/catalog_metadata'
+
+require 'forwardable'
 
 
 
 module HT
   class Item
-    def initialize(id, pairtree_root: HT::SDRDATAROOT,
+    extend Forwardable
+
+    def_delegators :@metadata, :id, :dir, :namespace, :barcode, :zipfile_path
+
+    attr_accessor :catalog_metadata_lookup
+    def initialize(id,
+                   catalog_metadata_lookup: HT::CatalogMetadata.new,
+                   pairtree_root: HT::SDRDATAROOT,
                    metsfile_path: nil,
                    zipfile: nil)
       @metadata = Metadata.new(id, pairtree_root: pairtree_root, metsfile_path: metsfile_path)
       @zipfile  = zipfile.nil? ? Zipfile.new(@metadata.zipfile_path) : zipfile
+      @catalog_metadata_lookup = catalog_metadata_lookup
     end
 
     def generate_file_selector(wanted)
       is_wanted = wanted.reduce({}) {|h, k| h[k] = true; h}
-      ->(e) { is_wanted.has_key? e.name}
+      ->(e) {is_wanted.has_key? e.name}
     end
 
     def text_blocks(files_we_want = @metadata.ordered_zipfile_internal_text_paths)
@@ -28,6 +34,12 @@ module HT
       hash_of_texts  = @zipfile.contents_hashed_by_name(is_interesting)
       files_we_want.map {|fname| hash_of_texts[fname].force_encoding(Encoding::UTF_8)}
     end
+
+    def catalog_metadata
+      catalog_metadata_lookup[id]
+    end
+
+
   end
 end
 

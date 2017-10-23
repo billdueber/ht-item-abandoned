@@ -1,8 +1,8 @@
-import java.util.zip.ZipInputStream
-import java.util.zip.ZipFile
-import java.io.InputStreamReader
-import java.io.BufferedReader
-import java.util.stream.Collectors
+java_import java.util.zip.ZipInputStream
+java_import java.util.zip.ZipFile
+java_import java.io.InputStreamReader
+java_import java.io.BufferedReader
+java_import java.util.stream.Collectors
 
 module HT
   class Item
@@ -11,10 +11,7 @@ module HT
     # one of several "places where we keep crap"
     # implementations that respond to something
     # like #contents_hashed_by_name
-    class Zipfile
-      def initialize(path)
-        @path = path
-      end
+    module JRubyZipfile
 
       # Return a hash mapping {filepath => contents}
       def contents_hashed_by_name(is_interesting_lambda)
@@ -34,10 +31,6 @@ module HT
         contents
       end
 
-      IS_TEXT = ->(e) { e.name =~ /0+\d+\.txt\Z/}
-      def text_contents_hashed_by_name
-        contents_hashed_by_name(IS_TEXT)
-      end
 
     end
 

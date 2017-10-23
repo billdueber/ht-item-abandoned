@@ -1,53 +1,104 @@
-require 'ht/constants'
-require 'ht/item/id'
-require 'nokogiri'
+require 'ht/catalog_metadata'
 require 'forwardable'
-
-
-# The only thing the item is actually asking of the metadata right
-# now is for a list of the interesting ids (e.g., text nodes) and
-# the order of the zipfile names. So let's just do that.
-#
 
 module HT
   class Item
     class Metadata
+      if defined? JRUBY_VERSION
+        require 'ht/item/jruby_metadata'
+        self.prepend HT::Item::JRubyMetadata
+      else
+        require 'ht/item/mri_metadata'
+        self.prepend HT::Item::MRIMetadata
+      end
+
+
       extend Forwardable
+
+      attr_accessor :catalog_metadata_lookup
       attr_reader :idobj, :zipfileroot, :mets
 
-      # Forward much of the interesting stuff to id/mets objects
+
+      # Forward much of the interesting stuff to id object
       def_delegators :@idobj, :id, :dir, :namespace, :barcode, :zipfile_path
 
-      def initialize(id, pairtree_root: HT::SDRDATAROOT, metsfile_path: nil)
-        @idobj          = HT::Item::ID.new(id, pairtree_root: pairtree_root)
-        metsfile_path ||= @idobj.metsfile_path
-        @mets = Nokogiri.XML(File.open(metsfile_path))
-        @zipfileroot    = @idobj.pair_translated_barcode
+
+      def initialize(id,
+                     catalog_metadata_lookup: HT::CatalogMetadata.new,
+                     pairtree_root: HT::SDRDATAROOT,
+                     metsfile_path: nil)
+        @idobj                   = HT::Item::ID.new(id, pairtree_root: pairtree_root)
+        @zipfileroot             = @idobj.pair_translated_barcode
+        @catalog_metadata_lookup = catalog_metadata_lookup
+        @metadata_solr_document  = {}
       end
 
-      def ordered_zipfile_internal_text_paths
-        # First, get all the textfiles
-        textfile_names = textfile_names_hashed_by_id
-        # Get them all out of the struct so we have the order
-        zipfilenames = {}
-        textfile_names.keys.each do |id|
-          order =  mets.xpath("METS:mets/METS:structMap[1]/METS:div[@TYPE=\"volume\"]/METS:div/METS:fptr[@FILEID=\"#{id}\"]/../@ORDER").first.value
-          zipfilenames[order.to_i] = File.join(@zipfileroot, textfile_names[id])
-        end
+      UNCHANGED_CATALOG_FIELDS = %w[
+      author_top
+      author2
+      callnosort
+      callnumber
+      countryOfPubStr
+      edition
+      hlb3Delimited
+      hlb3Str
+      hlb3Str
+      language008_full
+      lccn
+      mainauthor
+      sdrnum
+      serialTitle
+      serialTitle_a
+      serialTitle_ab
+      title_a
+      title_ab
+      title_top
+      titleSort
+      topicStr
+    ]
 
-        # And order them
-        zipfilenames.keys.sort.map{|order| zipfilenames[order]}
+      def metadata_solr_document
+        cm                      = catalog_metadata
+        ht_json                 = JSON.parse(cm['ht_json'.freeze]).find {|x| x['htid'.freeze] == id}
+        @metadata_solr_document = UNCHANGED_CATALOG_FIELDS.reduce({}) {|h, k| h[k] = cm[k]; h}
+
+        @metadata_solr_document['id'] = id
+        @metadata_solr_document['vol_id'] = id
+        @metadata_solr_document['allfields'] = allfields(cm['fullrecord'])
+
+
+        @metadata_solr_document.merge! ht_json_metadata(ht_json)
+        @metadata_solr_document.merge! dates(cm, @metadata_solr_document)
+
+
       end
 
-      def textfile_names_hashed_by_id
-        textfilenames = {}
-        mets.xpath("METS:mets/METS:fileSec/METS:fileGrp[@USE=\"ocr\"]/METS:file/METS:FLocat[1]").each do |tf|
-          id = tf.parent.attr('ID')
-          filename = tf.attr('xlink:href')
-          textfilenames[id] = filename
-        end
-        textfilenames
+      def catalog_metadata(id = self.id)
+        @cm ||= catalog_metadata_lookup[id]
       end
+
+
+      def ht_json_metadata(ht_json)
+        {
+          'volumn_enumcron'      => ht_json['enumcron'.freeze],
+          'enumPublishDate'      => ht_json['enum_pubdate'.freeze],
+          'enumPublishDateRange' => ht_json['enum_pubdate_range'.freeze],
+          'htsource'             => ht_source_from_collection_code(ht_json['collection_code']),
+        }
+      end
+
+      def dates(cm, msd)
+        {
+          'bothPublishDate'      => (msd['enumPublishDate'] or cm['publishDate']),
+          'bothPublishDateRange' => (msd['enumPublishDateRange'] or cm['publishDateRange']),
+          'date'                 => cm['publishDate']
+        }
+      end
+
+      def allfields(marcxml = catalog_metadata_lookup[id]['fullrecord'])
+        get_allfields_from_marcxml(marcxml)
+      end
+
 
     end
   end
