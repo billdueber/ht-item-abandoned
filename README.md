@@ -26,7 +26,7 @@ item.digitization_source  # => "google"
 
 # From the mets
 item.ordered_zipfile_internal_text_paths  # => ["c105177123/UCAL_C105177123_00000001.txt",
-                                                "c105177123/UCAL_C105177123_00000002.txt",...]
+                                          #     "c105177123/UCAL_C105177123_00000002.txt",...]
 
 # From the zipfile: ordered array of the page texts
 item.text_blocks  # => ["hia Media\n.OSeries\n۹۷۸-۹۶۴-۳۴۲۸۵-۱\nییطسلف نادیم یزکرم هاگشورف\nنفلت ...", ..., ]
@@ -42,4 +42,5 @@ item.text_blocks  # => ["hia Media\n.OSeries\n۹۷۸-۹۶۴-۳۴۲۸۵-۱\nیی�
   * print holdings
   * last update date
 * Make it easier to make catalog/db calls in batches (API now is ugly)
+* Make it easier to use on non-repo machines (to get access to all the catalog metadata easily)
 
