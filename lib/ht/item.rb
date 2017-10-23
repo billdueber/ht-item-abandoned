@@ -14,7 +14,7 @@ module HT
     def_delegators :@metadata, :id, :dir, :namespace, :barcode, :zipfile_path,
                    :ordered_zipfile_internal_text_paths,
                    :ingest_date, :rights, :collection_code, :digitization_source,
-                   :held_by
+                   :held_by, :record_id, :title
 
     attr_accessor :catalog_metadata_lookup
 

@@ -1,6 +1,6 @@
 require 'ht/catalog_metadata'
 require 'forwardable'
-require 'datetime'
+require 'date'
 
 module HT
   class Item
@@ -60,11 +60,11 @@ module HT
 
       def metadata_solr_document
         cm                      = catalog_metadata
-        @ht_json                 = JSON.parse(cm['ht_json'.freeze]).find {|x| x['htid'.freeze] == id}
+        @ht_json                = JSON.parse(cm['ht_json'.freeze]).find {|x| x['htid'.freeze] == id}
         @metadata_solr_document = UNCHANGED_CATALOG_FIELDS.reduce({}) {|h, k| h[k] = cm[k]; h}
 
-        @metadata_solr_document['id'] = id
-        @metadata_solr_document['vol_id'] = id
+        @metadata_solr_document['id']        = id
+        @metadata_solr_document['vol_id']    = id
         @metadata_solr_document['allfields'] = allfields(cm['fullrecord'])
 
 
@@ -76,26 +76,38 @@ module HT
         @cm ||= catalog_metadata_lookup[id]
       end
 
+      def ht_json
+        @ht_json ||= JSON.parse(catalog_metadata['ht_json'.freeze]).find {|x| x['htid'.freeze] == id}
+      end
+
       # Pull stuff out of the ht_json
 
       def ingest_date
-        DateTime.parse @ht_json['injest']
+        DateTime.parse ht_json['ingest']
       end
 
       def rights
-        @ht_json['rights']
+        ht_json['rights']
       end
 
       def collection_code
-        @ht_json['collection_code']
+        ht_json['collection_code']
       end
 
       def digitization_source
-        @ht_json['dig_source']
+        ht_json['dig_source']
       end
 
       def held_by
-        @ht_json['heldby']
+        ht_json['heldby']
+      end
+
+      def record_id
+        catalog_metadata['id']
+      end
+
+      def title
+        catalog_metadata['title'].first
       end
 
 
