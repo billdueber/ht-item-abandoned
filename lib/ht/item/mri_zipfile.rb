@@ -12,17 +12,14 @@ module HT
         @path = path
       end
 
-      # Return a hash mapping {filepath => contents}
-      def contents_hashed_by_name(is_interesting_lambda)
-        contents          = {}
-        stream            = Zip::InputStream.new(@path)
-        while e = stream.get_next_entry
-          next unless is_interesting_lambda.(e)
-          contents[e.name] = stream.read
-        end
-        contents
+      def stream
+        @stream ||= Zip::InputStream.new(@path)
       end
 
+
+      def text_from_stream(stream)
+        stream.read
+      end
 
     end
 

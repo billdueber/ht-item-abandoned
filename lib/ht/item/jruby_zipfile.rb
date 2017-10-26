@@ -13,31 +13,18 @@ module HT
     # like #contents_hashed_by_name
     module JRubyZipfile
 
-      # TODO: create a method that yields a name/stream to a block
-      #
+      JOINER = Collectors.joining("\n")
 
-      ALWAYS_INTERESTING = ->(e) {true}
-
-      def each_entry_and_stream(is_interesting_lambda = ALWAYS_INTERESTING)
-        stream = ZipInputStream.new(java.io.FileInputStream.new(@path))
-        while e = stream.get_next_entry
-          yield [e, stream] if is_interesting_lambda.(e)
-        end
+      def stream
+        @stream ||= ZipInputStream.new(java.io.FileInputStream.new(@path))
       end
 
-      # Return a hash mapping {filepath => contents}
-      def contents_hashed_by_name(is_interesting_lambda)
-        contents = {}
 
-        each_entry_and_stream(is_interesting_lambda) do |e, stream|
-          isr              = InputStreamReader.new(stream, 'UTF-8')
-          br               = BufferedReader.new(isr)
-          txt              = br.lines.collect(Collectors.joining("\n"))
-          contents[e] = txt
-        end
+      def text_from_stream(stream)
+        isr = InputStreamReader.new(stream, 'UTF-8')
+        br  = BufferedReader.new(isr)
+        br.lines.collect(JOINER)
       end
-
-      contents
     end
   end
 

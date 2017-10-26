@@ -6,7 +6,7 @@ describe HT::Item::Zipfile do
   let(:pages) {156}
 
   it "opens and gets text by internal filename" do
-    texts = zip.text_contents_hashed_by_name
+    texts = zip.all_txt_hashed_by_filename
     random_page = Random.rand(156)
     seq = '%07d' % random_page
     matching_text = Regexp.new(seq)
